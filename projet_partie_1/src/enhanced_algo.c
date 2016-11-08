@@ -6,6 +6,7 @@
 #endif
 
 #include <sys/time.h>
+#include "../inc/utils.h"
 
 
 /**
@@ -31,7 +32,6 @@ double my_gettimeofday(){
 int read_param(char *name, unsigned long **data, int *n, int *l, int *h){
 
   FILE* fp = NULL;
-  int i = 0;
   fp = fopen(name, "r");
   if(fp == NULL){
     printf("fopen :\t ERROR\n");
@@ -39,6 +39,7 @@ int read_param(char *name, unsigned long **data, int *n, int *l, int *h){
   }
   fscanf(fp, "%u %u", l, h);
   fscanf(fp, "%u", n);
+  
   fclose(fp);
   return 0;
 }
@@ -69,35 +70,74 @@ int read_data(char *name, unsigned long **data, int n){
   
   for(i = 0; i < n; i++)
     fscanf(fp, "%lu %lu", &data[i][0], &data[i][1]);
+  
+  fclose(fp);
   return 0;
 }
 
 
 /**
  *
- * Function naive_algo()
+ * Function enhanced_algo()
  *
  **/
-unsigned long long naive_algo(unsigned long **data, int n, int l, int h){
+unsigned long long enhanced_algo(unsigned long **data, int n, int l, int h){
 
   // for each (i,j) w/ i<j do
-  int a = 0, b = 0, c = 0, ymin = 0;
+  int a = 0, b = 0, ymin = 0, aux = n/10;
   unsigned long long S = 0, S_ij = 0;
   for(a = 0; a < n; a++){
     for(b = a+1; b < n; b++){
       if(b == a+1)
 	ymin = h;
-      else{
-	ymin = data[a+1][1];
-	for(c = a+1; c < b; c++){
-	  if(data[c][1] < ymin)
-	    ymin = data[c][1];
-	} // c loop
-      } // else loop
+
+      else if (ymin > data[b-1][1])
+	ymin = data[b-1][1];
+      /*else
+      // do nothing
+      } // else loop*/
       S_ij = (data[b][0] - data[a][0]) * ymin; 
       if(S_ij > S)
 	S = S_ij;
     } // b loop
+    if (a%aux == 0){
+      printf("%d %%\n", (a*100/n)+10);
+    }
+  } // a loop
+  return S;
+}
+
+
+/**
+ *
+ * Function enhanced_algo_parallel()
+ *
+ **/
+unsigned long long enhanced_algo_parallel(unsigned long **data, int n, int l, int h){
+
+  // for each (i,j) w/ i<j do
+  int a = 0, b = 0, ymin = 0, aux = n/10;
+  unsigned long long S = 0, S_ij = 0;
+
+#pragma omp parallel for shared(S)
+  for(a = 0; a < n; a++){
+    for(b = a+1; b < n; b++){
+      if(b == a+1)
+	ymin = h;
+
+      else if (ymin > data[b-1][1])
+	ymin = data[b-1][1];
+      /*else
+      // do nothing
+      } // else loop*/
+      S_ij = (data[b][0] - data[a][0]) * ymin; 
+      if(S_ij > S)
+	S = S_ij;
+    } // b loop
+    if (a%aux == 0){
+      printf("%d %%\n", (a*100/n)+10);
+
+    }
   } // a loop
   return S;
 }
@@ -147,21 +187,20 @@ int main(int argc, char **argv){
   
   /* Start timing */
   debut = my_gettimeofday();
-  S = naive_algo(data, n, l, h);
+  
   /* Do computation:  */
-  /*
 #ifdef _OPENMP
-#pragma omp parallel shared(n)
+#pragma omp parallel shared(n, l, h)
 #pragma omp single
-  res=0;
-
+  S = enhanced_algo_parallel(data, n, l, h);
+  
 #else
-  res=1;
+  S = enhanced_algo(data, n, l, h);
 #endif
-  */
-
+  
   /* End timing */
   fin = my_gettimeofday();
+  
   fprintf(stdout, " N = %d\t S = %llu\n", n, S);
   fprintf( stdout, "For n=%d: total computation time (with gettimeofday()) : %g s\n",
 	   n, fin - debut);
