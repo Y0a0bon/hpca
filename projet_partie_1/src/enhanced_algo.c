@@ -124,12 +124,11 @@ unsigned long long enhanced_algo_parallel(unsigned long **data, int n, int l, in
     for(b = a+1; b < n; b++){
       if(b == a+1)
 	ymin = h;
-
       else if (ymin > data[b-1][1])
 	ymin = data[b-1][1];
-      /*else
-      // do nothing
-      } // else loop*/
+      // else -- nothing
+      // WARNING : no default case
+
       S_ij = (data[b][0] - data[a][0]) * ymin; 
       if(S_ij > S)
 	S = S_ij;
