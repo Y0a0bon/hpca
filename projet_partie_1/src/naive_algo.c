@@ -100,9 +100,9 @@ unsigned long long naive_algo(unsigned long **data, int n, int l, int h){
       if(S_ij > S)
 	S = S_ij;
     } // b loop
-    /*if (a%aux == 0)
+    if (a%aux == 0)
       printf("%d %%...", (a*100/n)+10);
-    */
+
   } // a loop
   return S;
 }
@@ -134,9 +134,9 @@ unsigned long long naive_algo_parallel(unsigned long **data, int n, int l, int h
       if(S_ij > S)
 	S = S_ij;
     } // b loop
-    /*if (a%aux == 0)
+    if (a%aux == 0)
       printf("%d %%...", (a*100/n)+10);
-    */
+
   } // a loop
   return S;
 }
@@ -179,7 +179,7 @@ int main(int argc, char **argv){
     return -1;
   }
   
-  //printf("\nn=%d l=%d h=%d\n", n, l, h);
+  printf("\nn=%d l=%d h=%d\n", n, l, h);
   /*for(i = 0; i < n; i++){
     printf("%lu,%lu\n", data[i][0], data[i][1]);
     }*/
@@ -200,9 +200,9 @@ int main(int argc, char **argv){
   /* End timing */
   fin = my_gettimeofday();
   
-  /*fprintf(stdout, "\nN = %d\t S = %llu\n", n, S);
+  fprintf(stdout, "\nN = %d\t S = %llu\n", n, S);
   fprintf( stdout, "For n=%d: total computation time (with gettimeofday()) : %g s\n\n",
-  n, fin - debut);*/
+  n, fin - debut);
   fprintf( stdout, "%g\n",
 	   fin - debut);
   
