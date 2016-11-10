@@ -1,0 +1,11 @@
+#!/bin/bash
+
+for((var = 1; var <= 100; var++))
+do
+	./bin/naive_algo data/ex_N500_res7854 >> saved/stats_500_naive.txt
+	#./bin/naive_algo data/ex_N500_res7854 >> saved/stats_500_naive_parallel.txt
+	./bin/enhanced_algo data/ex_N500_res7854 >> saved/stats_500_enhanced.txt
+	#./bin/enhanced_algo data/ex_N500_res7854 >> saved/stats_500_enhanced_parallel.txt
+done
+
+

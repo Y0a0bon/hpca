@@ -100,9 +100,43 @@ unsigned long long naive_algo(unsigned long **data, int n, int l, int h){
       if(S_ij > S)
 	S = S_ij;
     } // b loop
-    if (a%aux == 0){
-      printf("%d/%d cases\n", a, n); 
-    }
+    /*if (a%aux == 0)
+      printf("%d %%...", (a*100/n)+10);
+    */
+  } // a loop
+  return S;
+}
+
+
+/**
+ *
+ * Function naive_algo_parallel()
+ *
+ **/
+unsigned long long naive_algo_parallel(unsigned long **data, int n, int l, int h){
+
+  // for each (i,j) w/ i<j do
+  int a = 0, b = 0, c = 0, ymin = 0, aux = n/10;
+  unsigned long long S = 0, S_ij = 0;
+#pragma omp parallel for shared(S, a, c) private (b)
+  for(a = 0; a < n; a++){
+    for(b = a+1; b < n; b++){
+      if(b == a+1)
+	ymin = h;
+      else{
+	ymin = data[a+1][1];
+	for(c = a+1; c < b; c++){
+	  if(data[c][1] < ymin)
+	    ymin = data[c][1];
+	} // c loop
+      } // else loop
+      S_ij = (data[b][0] - data[a][0]) * ymin; 
+      if(S_ij > S)
+	S = S_ij;
+    } // b loop
+    /*if (a%aux == 0)
+      printf("%d %%...", (a*100/n)+10);
+    */
   } // a loop
   return S;
 }
@@ -145,32 +179,32 @@ int main(int argc, char **argv){
     return -1;
   }
   
-  //printf("n=%d l=%d h=%d\n", n, l, h);
+  //printf("\nn=%d l=%d h=%d\n", n, l, h);
   /*for(i = 0; i < n; i++){
     printf("%lu,%lu\n", data[i][0], data[i][1]);
     }*/
   
   /* Start timing */
   debut = my_gettimeofday();
-  S = naive_algo(data, n, l, h);
+
   /* Do computation:  */
-  /*
 #ifdef _OPENMP
-#pragma omp parallel shared(n)
+#pragma omp parallel shared(n, l, h)
 #pragma omp single
-  res=0;
+   S = naive_algo_parallel(data, n, l, h);
 
 #else
-  res=1;
+  S = naive_algo(data, n, l, h);
 #endif
-  */
 
   /* End timing */
   fin = my_gettimeofday();
-  fprintf(stdout, " N = %d\t S = %llu\n", n, S);
-  fprintf( stdout, "For n=%d: total computation time (with gettimeofday()) : %g s\n",
-	   n, fin - debut);
   
-  //fprintf( stdout, "%g\n", fin - debut);
+  /*fprintf(stdout, "\nN = %d\t S = %llu\n", n, S);
+  fprintf( stdout, "For n=%d: total computation time (with gettimeofday()) : %g s\n\n",
+  n, fin - debut);*/
+  fprintf( stdout, "%g\n",
+	   fin - debut);
+  
   return 0;
 }
