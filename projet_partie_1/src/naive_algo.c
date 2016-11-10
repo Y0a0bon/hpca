@@ -145,7 +145,7 @@ int main(int argc, char **argv){
     return -1;
   }
   
-  printf("n=%d l=%d h=%d\n", n, l, h);
+  //printf("n=%d l=%d h=%d\n", n, l, h);
   /*for(i = 0; i < n; i++){
     printf("%lu,%lu\n", data[i][0], data[i][1]);
     }*/
@@ -170,6 +170,7 @@ int main(int argc, char **argv){
   fprintf(stdout, " N = %d\t S = %llu\n", n, S);
   fprintf( stdout, "For n=%d: total computation time (with gettimeofday()) : %g s\n",
 	   n, fin - debut);
-      
+  
+  //fprintf( stdout, "%g\n", fin - debut);
   return 0;
 }

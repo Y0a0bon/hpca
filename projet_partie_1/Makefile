@@ -2,9 +2,9 @@ CXX=gcc -Wall -O3
 
 OMP=#-fopenmp
 
-FILES= enhanced_algo #utils #naive_algo
+FILES= naive_algo #enhanced_algo #utils #naive_algo
 OBJECTS=$(addsuffix .o, $(FILES))
-BIN=bin/enhanced_algo
+BIN=bin/naive_algo
 
 all : $(BIN)
 
