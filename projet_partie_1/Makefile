@@ -1,21 +1,26 @@
-CXX=gcc -Wall -O3
+CC=gcc -Wall -O3
 
 OMP=#-fopenmp
 
-FILES= enhanced_algo #utils #naive_algo
+FILES= naive_algo utils #enhanced_algo utils #naive_algo
 OBJECTS=$(addsuffix .o, $(FILES))
-BIN=bin/enhanced_algo
+BIN=bin/naive_algo #bin/naive_algo
 
 all : $(BIN)
 
 $(BIN) : $(addprefix obj/, $(OBJECTS))
-	$(CXX) -o $@ $^ $(LDFLAGS) $(OMP) 
+	$(CC) -o $@ $^ $(OMP) 
 
 obj/%.o : src/%.c
-	$(CXX) -c -o $@ $^ $(OMP)
+	$(CC) -c -o $@ $^ $(OMP)
 
 exec:
 	$(BIN)
 
+#.PHONY: clean mrproper
+
 clean :
 	rm -f bin/* obj/*
+
+mrproper :
+	rm -f bin/* obj/* saved/*

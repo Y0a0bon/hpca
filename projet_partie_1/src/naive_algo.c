@@ -6,73 +6,7 @@
 #endif
 
 #include <sys/time.h>
-
-
-/**
- *
- * Function my_gettimeofday()
- * Used to compute time of execution
- *
- **/
-double my_gettimeofday(){
-  struct timeval tmp_time;
-  gettimeofday(&tmp_time, NULL);
-  return tmp_time.tv_sec + (tmp_time.tv_usec * 1.0e-6L);
-}
-
-
-/**
- *
- * Function read_param()
- * "l h
- *  n"
- *
- **/
-int read_param(char *name, unsigned long **data, int *n, int *l, int *h){
-
-  FILE* fp = NULL;
-  int i = 0;
-  fp = fopen(name, "r");
-  if(fp == NULL){
-    printf("fopen :\t ERROR\n");
-    return -1;
-  }
-  fscanf(fp, "%u %u", l, h);
-  fscanf(fp, "%u", n);
-  fclose(fp);
-  return 0;
-}
-
-
-/**
- *
- * Function read_data()
- * "l h
- *  n
- *  x_0 y_0
- *  ...
- *  x_n y_n"
- *
- **/
-int read_data(char *name, unsigned long **data, int n){
-
-  FILE* fp = NULL;
-  int i = 0, a = 0, b = 0;
-  fp = fopen(name, "r");
-  if(fp == NULL){
-    printf("fopen :\t ERROR\n");
-    return -1;
-  }
-  /* Ghost reading */
-  fscanf(fp, "%u %u", &a, &b);
-  fscanf(fp, "%u", &a);
-  
-  for(i = 0; i < n; i++)
-    fscanf(fp, "%lu %lu", &data[i][0], &data[i][1]);
-  
-  fclose(fp);
-  return 0;
-}
+#include "../inc/utils.h"
 
 
 /**
@@ -100,8 +34,8 @@ unsigned long long naive_algo(unsigned long **data, int n, int l, int h){
       if(S_ij > S)
 	S = S_ij;
     } // b loop
-    if (a%aux == 0)
-      printf("%d %%...", (a*100/n)+10);
+    /*if (a%aux == 0)
+      printf("%d %%...", (a*100/n)+10);*/
 
   } // a loop
   return S;
@@ -134,8 +68,8 @@ unsigned long long naive_algo_parallel(unsigned long **data, int n, int l, int h
       if(S_ij > S)
 	S = S_ij;
     } // b loop
-    if (a%aux == 0)
-      printf("%d %%...", (a*100/n)+10);
+    /*if (a%aux == 0)
+      printf("%d %%...", (a*100/n)+10);*/
 
   } // a loop
   return S;
@@ -179,7 +113,7 @@ int main(int argc, char **argv){
     return -1;
   }
   
-  printf("\nn=%d l=%d h=%d\n", n, l, h);
+  /*printf("\nn=%d l=%d h=%d\n", n, l, h);*/
   /*for(i = 0; i < n; i++){
     printf("%lu,%lu\n", data[i][0], data[i][1]);
     }*/
@@ -200,9 +134,9 @@ int main(int argc, char **argv){
   /* End timing */
   fin = my_gettimeofday();
   
-  fprintf(stdout, "\nN = %d\t S = %llu\n", n, S);
-  fprintf( stdout, "For n=%d: total computation time (with gettimeofday()) : %g s\n\n",
-  n, fin - debut);
+  fprintf(stdout, "N = %d\t S = %llu\n", n, S);
+  /*fprintf( stdout, "For n=%d: total computation time (with gettimeofday()) : %g s\n\n",
+  n, fin - debut);*/
   fprintf( stdout, "%g\n",
 	   fin - debut);
   
