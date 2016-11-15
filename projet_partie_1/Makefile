@@ -1,10 +1,10 @@
 CC=gcc -Wall -O3
 
-OMP=#-fopenmp
+OMP=-fopenmp
 
-FILES= naive_algo utils #enhanced_algo utils #naive_algo
+FILES= enhanced_algo utils #naive_algo
 OBJECTS=$(addsuffix .o, $(FILES))
-BIN=bin/naive_algo #bin/naive_algo
+BIN=bin/enhanced_algo #bin/naive_algo
 
 all : $(BIN)
 

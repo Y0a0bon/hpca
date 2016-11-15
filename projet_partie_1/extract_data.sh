@@ -9,4 +9,4 @@ do
 	echo -e "$line" 
     fi
     let "i = i + 1"
-done < saved/stats_500_naive.txt
+done < saved/seq/stats_500_enhanced.txt
