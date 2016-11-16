@@ -1,0 +1,17 @@
+#!/bin/bash
+
+for((var = 1; var <= 100; var++))
+do
+	#./bin/naive_algo data/ex_N500_res7854 >> saved/stats_500_naive.txt
+	#./bin/naive_algo data/ex_N500_res7854 >> saved/stats_500_naive_parallel.txt
+	./bin/enhanced_algo data/ex_N500_res7854 >> saved/stats_500_enhanced_parallel_4.txt
+	./bin/enhanced_algo data/ex_N32768_alea >> saved/stats_32768_enhanced_parallel_4.txt
+	./bin/enhanced_algo data/ex_N65536_alea >> saved/stats_65536_enhanced_parallel_4.txt
+	./bin/enhanced_algo data/ex_N100000_res100000 >> saved/stats_100000_enhanced_parallel_4.txt
+	if [ $(( $var % 10 )) -eq 0 ] ;
+	then
+		echo "$var done"
+	fi
+done
+
+

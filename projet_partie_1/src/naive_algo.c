@@ -6,73 +6,7 @@
 #endif
 
 #include <sys/time.h>
-
-
-/**
- *
- * Function my_gettimeofday()
- * Used to compute time of execution
- *
- **/
-double my_gettimeofday(){
-  struct timeval tmp_time;
-  gettimeofday(&tmp_time, NULL);
-  return tmp_time.tv_sec + (tmp_time.tv_usec * 1.0e-6L);
-}
-
-
-/**
- *
- * Function read_param()
- * "l h
- *  n"
- *
- **/
-int read_param(char *name, unsigned long **data, int *n, int *l, int *h){
-
-  FILE* fp = NULL;
-  int i = 0;
-  fp = fopen(name, "r");
-  if(fp == NULL){
-    printf("fopen :\t ERROR\n");
-    return -1;
-  }
-  fscanf(fp, "%u %u", l, h);
-  fscanf(fp, "%u", n);
-  fclose(fp);
-  return 0;
-}
-
-
-/**
- *
- * Function read_data()
- * "l h
- *  n
- *  x_0 y_0
- *  ...
- *  x_n y_n"
- *
- **/
-int read_data(char *name, unsigned long **data, int n){
-
-  FILE* fp = NULL;
-  int i = 0, a = 0, b = 0;
-  fp = fopen(name, "r");
-  if(fp == NULL){
-    printf("fopen :\t ERROR\n");
-    return -1;
-  }
-  /* Ghost reading */
-  fscanf(fp, "%u %u", &a, &b);
-  fscanf(fp, "%u", &a);
-  
-  for(i = 0; i < n; i++)
-    fscanf(fp, "%lu %lu", &data[i][0], &data[i][1]);
-  
-  fclose(fp);
-  return 0;
-}
+#include "../inc/utils.h"
 
 
 /**
@@ -100,9 +34,43 @@ unsigned long long naive_algo(unsigned long **data, int n, int l, int h){
       if(S_ij > S)
 	S = S_ij;
     } // b loop
-    if (a%aux == 0){
-      printf("%d/%d cases\n", a, n); 
-    }
+    /*if (a%aux == 0)
+      printf("%d %%...", (a*100/n)+10);*/
+
+  } // a loop
+  return S;
+}
+
+
+/**
+ *
+ * Function naive_algo_parallel()
+ *
+ **/
+unsigned long long naive_algo_parallel(unsigned long **data, int n, int l, int h){
+
+  // for each (i,j) w/ i<j do
+  int a = 0, b = 0, c = 0, ymin = 0, aux = n/10;
+  unsigned long long S = 0, S_ij = 0;
+#pragma omp parallel for shared(S, a, c) private (b)
+  for(a = 0; a < n; a++){
+    for(b = a+1; b < n; b++){
+      if(b == a+1)
+	ymin = h;
+      else{
+	ymin = data[a+1][1];
+	for(c = a+1; c < b; c++){
+	  if(data[c][1] < ymin)
+	    ymin = data[c][1];
+	} // c loop
+      } // else loop
+      S_ij = (data[b][0] - data[a][0]) * ymin; 
+      if(S_ij > S)
+	S = S_ij;
+    } // b loop
+    /*if (a%aux == 0)
+      printf("%d %%...", (a*100/n)+10);*/
+
   } // a loop
   return S;
 }
@@ -145,31 +113,32 @@ int main(int argc, char **argv){
     return -1;
   }
   
-  printf("n=%d l=%d h=%d\n", n, l, h);
+  /*printf("\nn=%d l=%d h=%d\n", n, l, h);*/
   /*for(i = 0; i < n; i++){
     printf("%lu,%lu\n", data[i][0], data[i][1]);
     }*/
   
   /* Start timing */
   debut = my_gettimeofday();
-  S = naive_algo(data, n, l, h);
+
   /* Do computation:  */
-  /*
 #ifdef _OPENMP
-#pragma omp parallel shared(n)
+#pragma omp parallel shared(n, l, h)
 #pragma omp single
-  res=0;
+   S = naive_algo_parallel(data, n, l, h);
 
 #else
-  res=1;
+  S = naive_algo(data, n, l, h);
 #endif
-  */
 
   /* End timing */
   fin = my_gettimeofday();
-  fprintf(stdout, " N = %d\t S = %llu\n", n, S);
-  fprintf( stdout, "For n=%d: total computation time (with gettimeofday()) : %g s\n",
-	   n, fin - debut);
-      
+  
+  fprintf(stdout, "N = %d\t S = %llu\n", n, S);
+  /*fprintf( stdout, "For n=%d: total computation time (with gettimeofday()) : %g s\n\n",
+  n, fin - debut);*/
+  fprintf( stdout, "%g\n",
+	   fin - debut);
+  
   return 0;
 }

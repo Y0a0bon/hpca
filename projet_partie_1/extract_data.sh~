@@ -1,0 +1,7 @@
+#!/bin/bash
+
+for((var = 1; var <=200; var=var+2))
+do
+    sed -n "$(var)p" data/stats
+
+done
