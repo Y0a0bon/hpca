@@ -63,7 +63,7 @@ int read_data(char *name, unsigned long **data, int n){
   fscanf(fp, "%u", &a);
   
   for(i = 0; i < n; i++)
-    fscanf(fp, "%lu %lu", &data[i][0], &data[i][1]);
+    fscanf(fp, "%lu %lu", &data[0][i], &data[1][i]);
   
   fclose(fp);
   return 0;

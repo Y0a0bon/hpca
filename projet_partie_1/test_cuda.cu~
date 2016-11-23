@@ -83,6 +83,7 @@ __global__ void naive_algo(unsigned long *abs, unsigned long *ord, int n, int l,
       
       //if (a%aux == 0)
       //printf("%d %%...", (a*100/n)+10);
+      *S_gpu = 5;
     } //a<b loop
 
   } //test bound loop
@@ -99,9 +100,9 @@ __global__ void naive_algo(unsigned long *abs, unsigned long *ord, int n, int l,
 int main(int argc, char **argv){
  
   double debut=0.0, fin=0.0;
-  unsigned long **data, *abs_gpu, *ord_gpu;
+  unsigned long **data, **data_gpu;
   // unsigned long *data_abs, *data_ord, *data_gpu_abs, *data_gpu_ord;
-  unsigned long long S = 0, *S_gpu;
+  unsigned long long S = 0, *S_gpu;;
   int res = 0, i= 0;
   int n = 0, l = 0, h = 0;
   int *n_gpu, *l_gpu, *h_gpu;
@@ -120,10 +121,9 @@ int main(int argc, char **argv){
   }
   
   /* Allocate data table */
-  data = (unsigned long **) malloc(2 * sizeof(unsigned long *));
-  data[0] = (unsigned long *) malloc(n * sizeof(unsigned long));
-  data[1] = (unsigned long *) malloc(n * sizeof(unsigned long));
-
+  data = (unsigned long **) malloc(n * sizeof(unsigned long *));
+  for(i = 0; i < n; i++)
+    data[i] = (unsigned long *) malloc(2 * sizeof(unsigned long));
   
   /* Read coordinates from file */
   res = read_data(name, data, n);
@@ -149,10 +149,11 @@ int main(int argc, char **argv){
     printf("Parameters allocation failed\n");
 
 
-  cudaMalloc((void **)&abs_gpu, n * sizeof(unsigned long));
-  cudaMalloc((void **)&ord_gpu, n * sizeof(unsigned long));
-
+  size_t pitch;
   
+  cudaMallocPitch((void **)&data_gpu, &pitch, n * sizeof(unsigned long), 2);
+  
+
   printf("Transferts CPU -> GPU\n");
   
   /* Transferts CPU -> GPU (synchrones) */
@@ -160,9 +161,34 @@ int main(int argc, char **argv){
   cudaMemcpy(l_gpu, &l, sizeof(int), cudaMemcpyHostToDevice);
   cudaMemcpy(h_gpu, &h, sizeof(int), cudaMemcpyHostToDevice);
 
-  cudaMemcpy(abs_gpu, data[0], n * sizeof(unsigned long), cudaMemcpyHostToDevice);
-  cudaMemcpy(ord_gpu, data[1], n * sizeof(unsigned long), cudaMemcpyHostToDevice);
+  cudaMemcpy2D(&data_gpu, pitch, data, n*sizeof(unsigned long), n*sizeof(unsigned long), 2, cudaMemcpyHostToDevice);
 
+
+  /*
+  // points est un tableau alloue sur le CPU qui contient les adresses sur le GPU des differents points
+  //data_gpu est la copie de ce tableau sur le GPU
+  unsigned long ** points;
+
+  points = (unsigned long **) malloc( n * sizeof(unsigned long *));
+  printf("hello\n");
+  cudaMalloc((void **)&data_gpu, n*sizeof(unsigned long *)); //void *** ?
+
+ 
+  printf("tableau de points\n");
+  // Allocation et initialisation des n points sur GPU
+  // Puis recopie des adresses des points sur GPU
+  for(i=0; i<n; i++){
+ 
+    cudaMalloc((void **)&points[i], 2*sizeof(unsigned long));
+
+    cudaMemcpy(&points[i][0], &data[i][0],  sizeof(unsigned long), cudaMemcpyHostToDevice);
+    cudaMemcpy(&points[i][1],&data[i][1],  sizeof(unsigned long), cudaMemcpyHostToDevice);
+
+    cudaMemcpy(&data_gpu[i], &points[i], sizeof(unsigned long *), cudaMemcpyHostToDevice);
+
+  }
+  
+  */
   
   printf("lancement kernel\n");
   
@@ -180,7 +206,7 @@ int main(int argc, char **argv){
   
   printf("lancement\n");
   
-  naive_algo<<<tailleGrille, threadsParBloc>>>(abs_gpu, ord_gpu, n, l, h, S_gpu);
+  naive_algo<<<tailleGrille, threadsParBloc>>>(data_gpu, n, l, h, S_gpu);
 
   printf("sortie kernel\n");
 
@@ -203,17 +229,12 @@ int main(int argc, char **argv){
   printf("free\n");
   
   /* Free */
-  free(data[0]);
-  free(data[1]);
-  free(data);
-  
   cudaFree(l_gpu);
   cudaFree(h_gpu);
   cudaFree(n_gpu);
   cudaFree(S_gpu);
-
-  cudaFree(abs_gpu);
-  cudaFree(ord_gpu);
+  // cudaFree(points);
+  cudaFree(data_gpu);
 
   
   return 0;
