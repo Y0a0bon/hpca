@@ -163,6 +163,7 @@ int main(int argc, char **argv){
   cudaMemcpy(abs_gpu, data[0], n * sizeof(unsigned long), cudaMemcpyHostToDevice);
   cudaMemcpy(ord_gpu, data[1], n * sizeof(unsigned long), cudaMemcpyHostToDevice);
 
+  cudaMemset(S_gpu, 0, sizeof(unsigned long long));
   
   printf("lancement kernel\n");
   

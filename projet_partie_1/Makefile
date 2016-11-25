@@ -14,9 +14,9 @@ else
  CUDA_FLAGS = --generate-code arch=compute_35,code=sm_35 -O3 #-DCUDA_DEBUG 
 endif 
 
-FILES=enhanced_algo_cuda utils #naive_algo_cuda naive_algo_opt_cuda
+FILES=enhanced_algo_opt_cuda utils #naive_algo_cuda naive_algo_opt_cuda
 OBJECTS=$(addsuffix .o, $(FILES))
-BIN=bin/enhanced_algo_cuda
+BIN=bin/enhanced_algo_opt_cuda
 
 all : $(BIN)
 

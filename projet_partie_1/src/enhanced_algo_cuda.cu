@@ -52,17 +52,18 @@ static int iDivUp(int a, int b){
  **/
 __global__ void enhanced_algo(unsigned long *abs, unsigned long *ord, int n, int l, int h, unsigned long long *S_gpu){
 
+  
   int a = blockDim.x * blockIdx.x + threadIdx.x;
-  int b = blockDim.y * blockIdx.y + threadIdx.y;
-
+  //int b = blockDim.y * blockIdx.y + threadIdx.y;
+  int b;
 
   int ymin = 0, aux = n/10;
-  unsigned long long S_loc = 0;
+  unsigned long long S_loc = 0, S = 0;
 
- if ((a < n) && (b < n)){
+ if ((a < n)){
     
-    //On effectue le calcul uniquement pour a<b
-    if (a < b){
+    // On effectue le calcul pour tout b, a < b < n 
+   for (b = a+1; b < n; b++){
       
       if(b == a+1)
 	ymin = h;
@@ -74,14 +75,16 @@ __global__ void enhanced_algo(unsigned long *abs, unsigned long *ord, int n, int
       } // else loop*/
       S_loc = (abs[b] - abs[a]) * ymin;
 
-      //Rajouter des maxs locaux ?
-      atomicMax(S_gpu, S_loc);
-
-    } // a < b loop
-    /*if (a%aux == 0)
-      printf("%d %%... ", (a*100/n)+10);
-    */
+      if(S_loc > S)
+	S = S_loc;
+      
+    } // for loop
+   
+   //Rajouter des maxs locaux ?
+   atomicMax(S_gpu, S);
+   
   } // test bound loop
+
   return;
 }
 
@@ -149,14 +152,15 @@ int main(int argc, char **argv){
   cudaMemcpy(abs_gpu, data[0], n * sizeof(unsigned long), cudaMemcpyHostToDevice);
   cudaMemcpy(ord_gpu, data[1], n * sizeof(unsigned long), cudaMemcpyHostToDevice);
 
+  cudaMemset(S_gpu, 0, sizeof(unsigned long long));
   
   printf("lancement kernel\n");
 
   /* Lancement de kernel */
   
   //On utilise n*n threads mais ils n'effectueront pas tous des calcls en raison de la contrainte i<j
-  dim3 threadsParBloc(32, 32);
-  dim3 tailleGrille(iDivUp(n,32), iDivUp(n, 32));
+  dim3 threadsParBloc(32, 1);
+  dim3 tailleGrille(iDivUp(n,32), 1);
     
   
   
