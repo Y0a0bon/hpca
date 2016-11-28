@@ -8,9 +8,10 @@
 
 #define NUM_LOCALS 10000
 
-/** 
- * Controle des erreurs CUDA et debugging. 
- */
+
+/**
+ * CUDA error control and debugging.
+ **/
 #ifdef CUDA_DEBUG
 #define CUDA_SYNC_ERROR() {						\
     cudaError_t sync_error;						\
@@ -38,19 +39,21 @@
 
 
 /**
- * Retourne le quotient entier superieur ou egal a "a/b".
- * D apres : CUDA SDK 4.1
+ * Function iDivUp()
+ * Return integer quotient superior or equal to "a/b"
+ * Source : CUDA SDK 4.1
  */
-
 static int iDivUp(int a, int b){
   return ((a % b != 0) ? (a / b + 1) : (a / b));
 }
+
+
 /**
  *
- * Function naive_algo()
+ * Function naive_algo_opt_cuda()
  *
  **/
-__global__ void naive_algo(unsigned long *abs, unsigned long *ord, int n, int l, int h, unsigned long long *S_gpu, unsigned long long *local_max, int num_locals){
+__global__ void naive_algo_opt_cuda(unsigned long *abs, unsigned long *ord, int n, int l, int h, unsigned long long *S_gpu, unsigned long long *local_max, int num_locals){
 
   int a = blockDim.x * blockIdx.x + threadIdx.x;
   int b = blockDim.y * blockIdx.y + threadIdx.y;
@@ -63,7 +66,7 @@ __global__ void naive_algo(unsigned long *abs, unsigned long *ord, int n, int l,
   
   if ((a < n) && (b < n)){
     
-    //On effectue le calcul uniquement pour a<b
+    // Compute only when a < b
     if (a < b){
       
       if(b == a+1)
@@ -80,14 +83,12 @@ __global__ void naive_algo(unsigned long *abs, unsigned long *ord, int n, int l,
       
       S_it = (abs[b] - abs[a]) * ymin;
       
-      //Optimisation avec maximum locaux
+      // Optimize with local maximums
       old_max = atomicMax(&local_max[li], S_it);
       
       if (old_max < S_it)
 	atomicMax(S_gpu, S_it);
-      
-      //if (a%aux == 0)
-      //printf("%d %%...", (a*100/n)+10);
+
     } //a<b loop
 
   } //test bound loop
@@ -96,9 +97,9 @@ __global__ void naive_algo(unsigned long *abs, unsigned long *ord, int n, int l,
 }
 
 
-  /**
+/**
  *
- * Function main
+ * Function main()
  *
  **/
 int main(int argc, char **argv){
@@ -107,7 +108,7 @@ int main(int argc, char **argv){
   unsigned long **data, *abs_gpu, *ord_gpu;
   unsigned long long S = 0, *S_gpu, *local_max_gpu;
   
-  int num_locals = NUM_LOCALS; // modulo = nombre de maximaux locaux
+  int num_locals = NUM_LOCALS; // modulo = local maximums number
   int res = 0, i= 0;
   int n = 0, l = 0, h = 0;
   int *n_gpu, *l_gpu, *h_gpu;
@@ -143,8 +144,7 @@ int main(int argc, char **argv){
     printf("%lu,%lu\n", data[i][0], data[i][1]);
     }*/
 
-
-  printf("Allocation GPU\n");
+  printf("GPU allocation.\n");
 
   /* Allocation GPU */
   cudaMalloc((void **)&n_gpu, sizeof(int));
@@ -159,10 +159,10 @@ int main(int argc, char **argv){
   cudaMalloc((void **)&ord_gpu, n * sizeof(unsigned long));
 
   cudaMalloc((void **)&local_max_gpu, num_locals * sizeof(unsigned long long));
+
   
-  printf("Transferts CPU -> GPU\n");
-  
-  /* Transferts CPU -> GPU (synchrones) */
+  /* CPU -> GPU transfer (synchrones) */
+  printf("CPU -> GPU transfer.\n");
   cudaMemcpy(n_gpu, &n, sizeof(int), cudaMemcpyHostToDevice);
   cudaMemcpy(l_gpu, &l, sizeof(int), cudaMemcpyHostToDevice);
   cudaMemcpy(h_gpu, &h, sizeof(int), cudaMemcpyHostToDevice);
@@ -172,46 +172,43 @@ int main(int argc, char **argv){
 
   cudaMemset(local_max_gpu, 0, num_locals * sizeof(unsigned long long));
   cudaMemset(S_gpu, 0, sizeof(unsigned long long));
-	
-  printf("lancement kernel\n");
+
   
-  /* Lancement de kernel */
-  
-  //On utilise n*n threads mais ils n'effectueront pas tous des calcls en raison de la contrainte i<j
+  /* Kernel launching */	
+  printf("Kernel launching.\n");
+  // Using n*n threads but not every one is useful, because of the "i < j" constraint
   dim3 threadsParBloc(32, 32);
   dim3 tailleGrille(iDivUp(n,32), iDivUp(n, 32));
-    
-  
+
+
   /* Start timing */
   debut = my_gettimeofday();
 
-  /* Do computation:  */
+  /* Do computation: */
   
-  printf("lancement\n");
-  
-  naive_algo<<<tailleGrille, threadsParBloc>>>(abs_gpu, ord_gpu, n, l, h, S_gpu, local_max_gpu, num_locals);
+  printf("Launching.\n");
+  naive_algo_opt_cuda<<<tailleGrille, threadsParBloc>>>(abs_gpu, ord_gpu, n, l, h, S_gpu, local_max_gpu, num_locals);
 
-  printf("sortie kernel\n");
+  printf("Leaving kernel.\n");
 
   cudaDeviceSynchronize();
   
-  /* Recopie de l aire maximale sur le CPU */
+  /* Recovering maximal area on CPU */
   cudaMemcpy((void *)&S, S_gpu, sizeof(unsigned long long), cudaMemcpyDeviceToHost);
   
-
-  
+ 
   /* End timing */
   fin = my_gettimeofday();
   
   fprintf(stdout, "N = %d\t S = %llu\n", n, S);
-  /*fprintf( stdout, "For n=%d: total computation time (with gettimeofday()) : %g s\n\n",
-  n, fin - debut);*/
+  fprintf( stdout, "For n=%d: total computation time in s (with gettimeofday()) :\n",
+  n);
   fprintf( stdout, "%g\n",
 	   fin - debut);
 
-  printf("free\n");
   
   /* Free */
+  printf("\nFreeing and quitting.\n");
   free(data[0]);
   free(data[1]);
   free(data);
