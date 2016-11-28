@@ -1,26 +1,65 @@
 CC=gcc -Wall -O3
+NVCC=nvcc
 
-OMP=-fopenmp
+LIB=-lm -L/usr/local/cuda/lib64/ -lcuda -lcudart
+OMP= #-fopenmp
 
-FILES= enhanced_algo utils #naive_algo
-OBJECTS=$(addsuffix .o, $(FILES))
-BIN=bin/enhanced_algo #bin/naive_algo
+## Debugging
+DEBUGGING = y
 
-all : $(BIN)
+ifeq ($(DEBUGGING), y)
+ CFLAGS=-g 
+ CUDA_FLAGS = --generate-code arch=compute_35,code=sm_35 -g -G #-DCUDA_DEBUG 
+else
+ CFLAGS=-O3
+ CUDA_FLAGS = --generate-code arch=compute_35,code=sm_35 -O3 #-DCUDA_DEBUG 
+endif 
 
-$(BIN) : $(addprefix obj/, $(OBJECTS))
-	$(CC) -o $@ $^ $(OMP) 
+FILES = naive_algo enhanced_algo \
+	naive_algo_cuda naive_algo_opt_cuda \
+	enhanced_algo_cuda enhanced_algo_opt_cuda \
+	utils
 
-obj/%.o : src/%.c
-	$(CC) -c -o $@ $^ $(OMP)
+all : $(FILES)
 
-exec:
-	$(BIN)
+################################
 
-#.PHONY: clean mrproper
+naive_algo :
+	$(CC) -c -o obj/naive_algo.o src/naive_algo.c $(OMP)
+	$(CC) -c -o obj/utils.o src/utils.c $(OMP)
+	$(CC) -o bin/naive_algo obj/naive_algo.o obj/utils.o $(OMP)
+
+enhanced_algo :
+	$(CC) -c -o obj/enhanced_algo.o src/enhanced_algo.c $(OMP)
+	$(CC) -c -o obj/utils.o src/utils.c $(OMP)
+	$(CC) -o bin/enhanced_algo obj/enhanced_algo.o obj/utils.o $(OMP)
+
+################################
+
+naive_algo_cuda :
+	$(NVCC) -c -o obj/naive_algo_cuda.o src/naive_algo_cuda.cu $(CUDA_FLAGS)
+	$(NVCC) -c -o obj/utils.o src/utils.cu $(CUDA_FLAGS)
+	$(CC) -o bin/naive_algo_cuda obj/naive_algo_cuda.o obj/utils.o $(LIB)
+
+naive_algo_opt_cuda :
+	$(NVCC) -c -o obj/naive_algo_opt_cuda.o src/naive_algo_opt_cuda.cu $(CUDA_FLAGS)
+	$(NVCC) -c -o obj/utils.o src/utils.cu $(CUDA_FLAGS)
+	$(CC) -o bin/naive_algo_opt_cuda obj/naive_algo_opt_cuda.o obj/utils.o $(LIB)
+
+################################
+
+enhanced_algo_cuda :
+	$(NVCC) -c -o obj/enhanced_algo_cuda.o src/enhanced_algo_cuda.cu $(CUDA_FLAGS)
+	$(NVCC) -c -o obj/utils.o src/utils.cu $(CUDA_FLAGS)
+	$(CC) -o bin/enhanced_algo_cuda obj/enhanced_algo_cuda.o obj/utils.o $(LIB)
+
+enhanced_algo_opt_cuda :
+	$(NVCC) -c -o obj/enhanced_algo_opt_cuda.o src/enhanced_algo_opt_cuda.cu $(CUDA_FLAGS)
+	$(NVCC) -c -o obj/utils.o src/utils.cu $(CUDA_FLAGS)
+	$(CC) -o bin/enhanced_algo_opt_cuda obj/enhanced_algo_opt_cuda.o obj/utils.o $(LIB)
+
+################################
 
 clean :
 	rm -f bin/* obj/*
 
-mrproper :
-	rm -f bin/* obj/* saved/*

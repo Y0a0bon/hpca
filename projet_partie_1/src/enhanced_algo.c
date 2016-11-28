@@ -1,3 +1,6 @@
+/****************************
+ * Fichier enhanced_algo.cu *
+ ****************************/
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -26,17 +29,20 @@ unsigned long long enhanced_algo(unsigned long **data, int n, int l, int h){
 
       else if (ymin > data[b-1][1])
 	ymin = data[b-1][1];
-      /*else
-      // do nothing
-      } // else loop*/
-      S_ij = (data[b][0] - data[a][0]) * ymin; 
+      // else -- nothing
+      // WARNING : no default case
+      
+      S_ij = (data[b][0] - data[a][0]) * ymin;
+      
       if(S_ij > S)
 	S = S_ij;
     } // b loop
-    /*if (a%aux == 0)
-      printf("%d %%... ", (a*100/n)+10);
-    */
+    
+    //if (a%aux == 0)
+    // printf("%d %%... ", (a*100/n)+10);
+    
   } // a loop
+  
   return S;
 }
 
@@ -61,21 +67,24 @@ unsigned long long enhanced_algo_parallel(unsigned long **data, int n, int l, in
       // else -- nothing
       // WARNING : no default case
 
-      S_ij = (data[b][0] - data[a][0]) * ymin; 
+      S_ij = (data[b][0] - data[a][0]) * ymin;
+      
       if(S_ij > S)
 	S = S_ij;
     } // b loop
-    /*if (a%aux == 0)
-      printf("%d %%... ", (a*100/n)+10);
-*/
+    
+    //if (a%aux == 0)
+    // printf("%d %%... ", (a*100/n)+10);
+    
   } // a loop
+  
   return S;
 }
 
 
 /**
  *
- * Function main
+ * Function main()
  *
  **/
 int main(int argc, char **argv){
@@ -119,22 +128,23 @@ int main(int argc, char **argv){
   debut = my_gettimeofday();
   
   /* Do computation:  */
-  #ifdef _OPENMP
-  #pragma omp parallel shared(n, l, h)
-  #pragma omp single
+#ifdef _OPENMP
+#pragma omp parallel shared(n, l, h)
+#pragma omp single
   S = enhanced_algo_parallel(data, n, l, h);
   
-  #else
+#else
   S = enhanced_algo(data, n, l, h);
-  #endif
+#endif
   
   /* End timing */
   fin = my_gettimeofday();
   
-  /*fprintf(stdout, "N = %d\t S = %llu\n", n, S);*/
-  /*fprintf( stdout, "For n=%d: total computation time (with gettimeofday()) : %g s\n",
-    n, fin - debut);*/
-  fprintf( stdout, "%g\n", fin - debut);
+  //fprintf(stdout, "\n\nN = %d\t S = %llu\n", n, S);
+  /*fprintf( stdout, "For n=%d: total computation time in s (with gettimeofday()) :\n",
+    n);*/
+  fprintf( stdout, "%g\n",
+	   fin - debut);
       
   return 0;
 }
