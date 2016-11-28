@@ -38,8 +38,8 @@ unsigned long long enhanced_algo(unsigned long **data, int n, int l, int h){
 	S = S_ij;
     } // b loop
     
-    if (a%aux == 0)
-      printf("%d %%... ", (a*100/n)+10);
+    //if (a%aux == 0)
+    // printf("%d %%... ", (a*100/n)+10);
     
   } // a loop
   
@@ -73,8 +73,8 @@ unsigned long long enhanced_algo_parallel(unsigned long **data, int n, int l, in
 	S = S_ij;
     } // b loop
     
-    if (a%aux == 0)
-      printf("%d %%... ", (a*100/n)+10);
+    //if (a%aux == 0)
+    // printf("%d %%... ", (a*100/n)+10);
     
   } // a loop
   
@@ -140,9 +140,9 @@ int main(int argc, char **argv){
   /* End timing */
   fin = my_gettimeofday();
   
-  fprintf(stdout, "\n\nN = %d\t S = %llu\n", n, S);
-  fprintf( stdout, "For n=%d: total computation time in s (with gettimeofday()) :\n",
-	   n);
+  //fprintf(stdout, "\n\nN = %d\t S = %llu\n", n, S);
+  /*fprintf( stdout, "For n=%d: total computation time in s (with gettimeofday()) :\n",
+    n);*/
   fprintf( stdout, "%g\n",
 	   fin - debut);
       

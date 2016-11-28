@@ -25,14 +25,14 @@ all : $(FILES)
 ################################
 
 naive_algo :
-	$(CC) -c -o obj/naive_algo.o src/naive_algo.c
-	$(CC) -c -o obj/utils.o src/utils.c 
-	$(CC) -o bin/naive_algo obj/naive_algo.o obj/utils.o
+	$(CC) -c -o obj/naive_algo.o src/naive_algo.c $(OMP)
+	$(CC) -c -o obj/utils.o src/utils.c $(OMP)
+	$(CC) -o bin/naive_algo obj/naive_algo.o obj/utils.o $(OMP)
 
 enhanced_algo :
-	$(CC) -c -o obj/enhanced_algo.o src/enhanced_algo.c
-	$(CC) -c -o obj/utils.o src/utils.c 
-	$(CC) -o bin/enhanced_algo obj/enhanced_algo.o obj/utils.o 
+	$(CC) -c -o obj/enhanced_algo.o src/enhanced_algo.c $(OMP)
+	$(CC) -c -o obj/utils.o src/utils.c $(OMP)
+	$(CC) -o bin/enhanced_algo obj/enhanced_algo.o obj/utils.o $(OMP)
 
 ################################
 
