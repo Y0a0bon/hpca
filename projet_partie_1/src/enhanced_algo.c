@@ -140,7 +140,7 @@ int main(int argc, char **argv){
   /* End timing */
   fin = my_gettimeofday();
   
-  //fprintf(stdout, "\n\nN = %d\t S = %llu\n", n, S);
+  fprintf(stdout, "N = %d\t S = %llu\n", n, S);
   /*fprintf( stdout, "For n=%d: total computation time in s (with gettimeofday()) :\n",
     n);*/
   fprintf( stdout, "%g\n",
