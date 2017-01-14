@@ -62,6 +62,7 @@ unsigned long long naive_algo_parallel(unsigned long **data, int n, int l, int h
   unsigned long long S = 0, S_ij = 0;
 #pragma omp parallel for shared(S, a, c) private (b)
   for(a = 0; a < n; a++){
+    // #pragma omp parallel for private(b,c) lastprivate(ymin) ?
     for(b = a+1; b < n; b++){
       if(b == a+1)
 	ymin = h;

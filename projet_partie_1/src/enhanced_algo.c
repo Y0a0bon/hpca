@@ -58,9 +58,10 @@ unsigned long long enhanced_algo_parallel(unsigned long **data, int n, int l, in
   int a = 0, b = 0, ymin = 0, aux = n/10;
   unsigned long long S = 0, S_ij = 0;
   /**
-    * Enlever private(a) ne change rien (>) 
+   * Enlever private(a) ne change rien (>) 
    **/
-#pragma omp parallel for private(b) //schedule(static) //reduction(max:S)
+
+#pragma omp parallel for private(b) //reduction(max:S) //schedule(static)
   for(a = 0; a < n; a++){     
     for(b = a+1; b < n; b++){
       if(b == a+1)
@@ -80,7 +81,6 @@ unsigned long long enhanced_algo_parallel(unsigned long **data, int n, int l, in
     // printf("%d %%... ", (a*100/n)+10);
     
   } // a loop
-  
   return S;
 }
 
