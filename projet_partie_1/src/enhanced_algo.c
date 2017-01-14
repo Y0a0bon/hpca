@@ -57,8 +57,11 @@ unsigned long long enhanced_algo_parallel(unsigned long **data, int n, int l, in
   // for each (i,j) w/ i<j do
   int a = 0, b = 0, ymin = 0, aux = n/10;
   unsigned long long S = 0, S_ij = 0;
-  #pragma omp parallel for shared(S, a) private(b)
-  for(a = 0; a < n; a++){
+  /**
+    * Enlever private(a) ne change rien (>) 
+   **/
+#pragma omp parallel for private(b) //schedule(static) //reduction(max:S)
+  for(a = 0; a < n; a++){     
     for(b = a+1; b < n; b++){
       if(b == a+1)
 	ymin = h;
@@ -131,6 +134,7 @@ int main(int argc, char **argv){
 #ifdef _OPENMP
 #pragma omp parallel shared(n, l, h)
 #pragma omp single
+
   S = enhanced_algo_parallel(data, n, l, h);
   
 #else
@@ -140,9 +144,9 @@ int main(int argc, char **argv){
   /* End timing */
   fin = my_gettimeofday();
   
-  //fprintf(stdout, "\n\nN = %d\t S = %llu\n", n, S);
-  /*fprintf( stdout, "For n=%d: total computation time in s (with gettimeofday()) :\n",
-    n);*/
+  fprintf(stdout, "\n\nN = %d\t S = %llu\n", n, S);
+  fprintf( stdout, "For n=%d: total computation time in s (with gettimeofday()) :\n",
+    n);
   fprintf( stdout, "%g\n",
 	   fin - debut);
       
