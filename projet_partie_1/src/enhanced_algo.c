@@ -20,7 +20,7 @@
 unsigned long long enhanced_algo(unsigned long **data, int n, int l, int h){
 
   // for each (i,j) w/ i<j do
-  int a = 0, b = 0, ymin = 0, aux = n/10;
+  int a = 0, b = 0, ymin = 0;
   unsigned long long S = 0, S_ij = 0;
   for(a = 0; a < n; a++){
     for(b = a+1; b < n; b++){
@@ -29,17 +29,15 @@ unsigned long long enhanced_algo(unsigned long **data, int n, int l, int h){
 
       else if (ymin > data[b-1][1])
 	ymin = data[b-1][1];
-      // else -- nothing
-      // WARNING : no default case
       
+      else{}
+
+      //S = MAX(S, (data[b][0] - data[a][0]) * ymin);
       S_ij = (data[b][0] - data[a][0]) * ymin;
       
       if(S_ij > S)
-	S = S_ij;
+      S = S_ij;
     } // b loop
-    
-    //if (a%aux == 0)
-    // printf("%d %%... ", (a*100/n)+10);
     
   } // a loop
   
@@ -55,26 +53,24 @@ unsigned long long enhanced_algo(unsigned long **data, int n, int l, int h){
 unsigned long long enhanced_algo_parallel(unsigned long **data, int n, int l, int h){
 
   // for each (i,j) w/ i<j do
-  int a = 0, b = 0, ymin = 0, aux = n/10;
-  unsigned long long S = 0, S_ij = 0;
-  #pragma omp parallel for shared(S, a) private(b)
-  for(a = 0; a < n; a++){
+  int a = 0, b = 0, ymin = 0;
+  unsigned long long S = 0;
+
+#pragma omp parallel for private(b) firstprivate(ymin) reduction(max:S) //schedule(static)
+  for(a = 0; a < n; a++){     
     for(b = a+1; b < n; b++){
       if(b == a+1)
 	ymin = h;
       else if (ymin > data[b-1][1])
 	ymin = data[b-1][1];
-      // else -- nothing
-      // WARNING : no default case
-
-      S_ij = (data[b][0] - data[a][0]) * ymin;
       
+      else{}
+
+      S = MAX(S, (data[b][0] - data[a][0]) * ymin);
+      /*S_ij = (data[b][0] - data[a][0]) * ymin;
       if(S_ij > S)
-	S = S_ij;
+	S = S_ij;*/
     } // b loop
-    
-    //if (a%aux == 0)
-    // printf("%d %%... ", (a*100/n)+10);
     
   } // a loop
   
@@ -90,7 +86,7 @@ unsigned long long enhanced_algo_parallel(unsigned long **data, int n, int l, in
 int main(int argc, char **argv){
  
   double debut=0.0, fin=0.0;
-  unsigned long **data;
+  unsigned long **data = NULL;
   unsigned long long S = 0;
   int res = 0, i= 0;
   int n = 0, l = 0, h = 0;
@@ -129,10 +125,7 @@ int main(int argc, char **argv){
   
   /* Do computation:  */
 #ifdef _OPENMP
-#pragma omp parallel shared(n, l, h)
-#pragma omp single
   S = enhanced_algo_parallel(data, n, l, h);
-  
 #else
   S = enhanced_algo(data, n, l, h);
 #endif
@@ -140,9 +133,9 @@ int main(int argc, char **argv){
   /* End timing */
   fin = my_gettimeofday();
   
-  //fprintf(stdout, "\n\nN = %d\t S = %llu\n", n, S);
-  /*fprintf( stdout, "For n=%d: total computation time in s (with gettimeofday()) :\n",
-    n);*/
+  /*fprintf(stdout, "\n\nN = %d\t S = %llu\n", n, S);
+  fprintf( stdout, "For n=%d: total computation time in s (with gettimeofday()) :\n",
+  n);*/
   fprintf( stdout, "%g\n",
 	   fin - debut);
       

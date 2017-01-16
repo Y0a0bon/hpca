@@ -1,0 +1,28 @@
+#!/bin/bash
+
+for((var = 1; var <= 100; var++))
+do
+
+	
+	#./bin/enhanced_algo data/ex_N5000_alea >> saved/stats_5000_enhanced_new.txt
+	#./bin/enhanced_algo data/ex_N10000_alea >> saved/stats_10000_enhanced.txt
+	#./bin/enhanced_algo data/ex_N32768_alea >> saved/stats_32768_enhanced_new.txt
+	#./bin/enhanced_algo data/ex_N65536_alea >> saved/stats_65536_enhanced_new.txt
+	#./bin/enhanced_algo data/ex_N100000_res100000 >> saved/stats_100000_enhanced_parallel.txt
+	#./bin/enhanced_algo data/ex_N262144_alea >> saved/stats_262144_enhanced_new.txt
+	#./bin/naive_algo_cuda data/ex_N10000_alea >> saved/stats_10000_naive_cuda.txt
+	#./bin/naive_algo_opt_cuda data/ex_N10000_alea >> saved/stats_10000_naive_opt_cuda.txt
+	./bin/dpr data/ex_N100000_res100000 >> saved/stats_100k_dpr_parallel.txt
+	./bin/dpr data/ex_N262144_alea >> saved/stats_262144_dpr_parallel.txt
+	./bin/dpr data/ex_N1000000_alea >> saved/stats_1M_dpr_parallel.txt
+	./bin/dpr data/ex_N10000000_alea >> saved/stats_10M_dpr_parallel.txt
+
+	
+	if [ $(( $var % 10 )) -eq 0 ] ;
+	then
+	    #./bin/enhanced_algo data/ex_N262144_alea >> saved/stats_262144_enhanced_new.txt
+	    echo "$var done"
+	fi
+done
+
+

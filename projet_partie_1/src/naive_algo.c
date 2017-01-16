@@ -20,7 +20,7 @@
 unsigned long long naive_algo(unsigned long **data, int n, int l, int h){
 
   // for each (i,j) w/ i<j do
-  int a = 0, b = 0, c = 0, ymin = 0, aux = n/10;
+  int a = 0, b = 0, c = 0, ymin = 0;
   unsigned long long S = 0, S_ij = 0;
   for(a = 0; a < n; a++){
     for(b = a+1; b < n; b++){
@@ -40,9 +40,6 @@ unsigned long long naive_algo(unsigned long **data, int n, int l, int h){
 	S = S_ij;
       
     } // b loop
-    
-    if (a%aux == 0)
-      printf("%d %%...", (a*100/n)+10);
 
   } // a loop
   
@@ -58,10 +55,11 @@ unsigned long long naive_algo(unsigned long **data, int n, int l, int h){
 unsigned long long naive_algo_parallel(unsigned long **data, int n, int l, int h){
 
   // for each (i,j) w/ i<j do
-  int a = 0, b = 0, c = 0, ymin = 0, aux = n/10;
-  unsigned long long S = 0, S_ij = 0;
-#pragma omp parallel for shared(S, a, c) private (b)
+  int a = 0, b = 0, c = 0, ymin = 0;
+  unsigned long long S = 0;
+
   for(a = 0; a < n; a++){
+    #pragma omp parallel for private(b,c) lastprivate(ymin)
     for(b = a+1; b < n; b++){
       if(b == a+1)
 	ymin = h;
@@ -72,16 +70,9 @@ unsigned long long naive_algo_parallel(unsigned long **data, int n, int l, int h
 	    ymin = data[c][1];
 	} // c loop
       } // else loop
-      
-      S_ij = (data[b][0] - data[a][0]) * ymin;
-      
-      if(S_ij > S)
-	S = S_ij;
-      
+
+      S = MAX(S, (data[b][0] - data[a][0]) * ymin);
     } // b loop
-    
-    if (a%aux == 0)
-      printf("%d %%...", (a*100/n)+10);
 
   } // a loop
   
@@ -136,8 +127,8 @@ int main(int argc, char **argv){
 
   /* Do computation:  */
 #ifdef _OPENMP
-#pragma omp parallel shared(n, l, h)
-#pragma omp single
+  #pragma omp parallel firstprivate(n, l, h)
+  #pragma omp single
    S = naive_algo_parallel(data, n, l, h);
 
 #else
