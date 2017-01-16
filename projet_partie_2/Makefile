@@ -1,6 +1,6 @@
 CC=gcc -Wall -O3
 
-OMP=#-fopenmp
+OMP=-fopenmp
 
 FILES= dpr utils #enhanced_algo  #naive_algo
 OBJECTS=$(addsuffix .o, $(FILES))
