@@ -86,7 +86,7 @@ unsigned long long enhanced_algo_parallel(unsigned long **data, int n, int l, in
 int main(int argc, char **argv){
  
   double debut=0.0, fin=0.0;
-  unsigned long **data;
+  unsigned long **data = NULL;
   unsigned long long S = 0;
   int res = 0, i= 0;
   int n = 0, l = 0, h = 0;
@@ -133,9 +133,9 @@ int main(int argc, char **argv){
   /* End timing */
   fin = my_gettimeofday();
   
-  fprintf(stdout, "\n\nN = %d\t S = %llu\n", n, S);
+  /*fprintf(stdout, "\n\nN = %d\t S = %llu\n", n, S);
   fprintf( stdout, "For n=%d: total computation time in s (with gettimeofday()) :\n",
-    n);
+  n);*/
   fprintf( stdout, "%g\n",
 	   fin - debut);
       

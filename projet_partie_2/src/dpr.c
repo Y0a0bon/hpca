@@ -4,7 +4,7 @@
 #include <omp.h>
 #include "../inc/utils.h"
 
-#define TRESHOLD 20000
+#define TRESHOLD 1000
 
 
 /**
@@ -124,13 +124,12 @@ unsigned long long dpr_parallel(unsigned long **data, int n, int l, int h, int i
   
   //We don't enter the loop if ind_end - ind_start == 2
   for ( i = ind_start + 2; i < ind_end; i++ ){
-    
     //Looking for the lowest ordinate
     if ( data[i][1] < ymin ){
       ymin = data[i][1];
       ind_min = i;
     }
-  }
+  } // for loop
   
   ycross = ymin;
 
@@ -144,14 +143,14 @@ unsigned long long dpr_parallel(unsigned long **data, int n, int l, int h, int i
       abs_left = 0;
       
       if ( data[ind_start][1] < ycross )
-				ycross = data[ind_start][1];
+	ycross = data[ind_start][1];
     }
     
     if ( ind_end == n - 1 ){
       abs_right = l;
       
       if ( data[ind_end][1] < ycross )
-				ycross = data[ind_end][1];
+	ycross = data[ind_end][1];
     }
     
     //extended area to at least one of the edges
@@ -164,18 +163,17 @@ unsigned long long dpr_parallel(unsigned long **data, int n, int l, int h, int i
 
   /* Switch to single-threading if threshold is reached */
   if(ind_min - ind_start < TRESHOLD){
-		left_area = dpr(data, n, l, h, ind_start, ind_min);
-		right_area = dpr(data, n, l, h, ind_min, ind_end);
+    left_area = dpr(data, n, l, h, ind_start, ind_min);
+    right_area = dpr(data, n, l, h, ind_min, ind_end);
   }
   else{
-    #pragma omp parallel
-		//#pragma omp single nowait
-		{
-			#pragma omp task
-			left_area = dpr_parallel(data, n, l, h, ind_start, ind_min);
-			#pragma omp task
-			right_area = dpr_parallel(data, n, l, h, ind_min, ind_end);
-		}
+    {
+#pragma omp task shared(left_area)
+      left_area = dpr_parallel(data, n, l, h, ind_start, ind_min);
+#pragma omp task shared(right_area)
+      right_area = dpr_parallel(data, n, l, h, ind_min, ind_end);
+#pragma omp taskwait
+    }
   }
   
   //Result is the max of these areas
@@ -188,19 +186,19 @@ unsigned long long dpr_parallel(unsigned long **data, int n, int l, int h, int i
   //printf("ind_start = %d\t, ind_min = %d\t, ind_end = %d\n left = %llu\t, right = %llu\t, cross = %llu, ext_cross = %llu, result_area = %llu\n\n", ind_start, ind_min, ind_end, left_area, right_area, crosswise_area, ext_crosswise_area, result_area);
   
   //Comparison with 2 specific cases (far left and right sides) if first call of the recursive function
-	/*
-  if ((ind_start == 0) && (ind_end == n - 1)){
+  /*
+    if ((ind_start == 0) && (ind_end == n - 1)){
 
     specific_case = data[ind_start][0]*h;
     if (result_area < specific_case)
-      result_area = specific_case;
+    result_area = specific_case;
 
     specific_case = (l - data[ind_end][0])*h;
     if (result_area < specific_case)
-      result_area = specific_case;
+    result_area = specific_case;
 
-  }
-	*/
+    }
+  */
   return result_area;
 }
 
@@ -245,21 +243,21 @@ int main(int argc, char **argv){
   debut = my_gettimeofday();
 
   /* Do computation:  */
-  #ifdef _OPENMP
-		#pragma omp parallel
-		#pragma omp single nowait
-			S = dpr_parallel(data, n, l, h, 0, n-1);
+#ifdef _OPENMP
+  #pragma omp parallel
+  #pragma omp single nowait
+  S = dpr_parallel(data, n, l, h, 0, n-1);
 
-		#else
-			S = dpr(data, n, l, h, 0, n-1);
-	#endif
+#else
+  S = dpr(data, n, l, h, 0, n-1);
+#endif
   
   /* End timing */
   fin = my_gettimeofday();
   
   fprintf(stdout, "N = %d\t S = %llu\n", n, S);
   fprintf( stdout, "For n=%d: total computation time (with gettimeofday()) : %g s\n\n",
-  n, fin - debut);
+	   n, fin - debut);
   /*fprintf( stdout, "%g\n",
     fin - debut);*/
   return 0;

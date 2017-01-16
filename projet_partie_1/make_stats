@@ -5,10 +5,12 @@ do
 	#./bin/naive_algo_cuda data/ex_N5000_alea >> saved/stats_5000_naive_cuda.txt
 	#./bin/naive_algo_opt_cuda data/ex_N5000_alea >> saved/stats_5000_naive_opt_cuda.txt
 	
-	./bin/enhanced_algo data/ex_N5000_alea >> saved/stats_5000_enhanced.txt
-	./bin/enhanced_algo data/ex_N10000_alea >> saved/stats_10000_enhanced.txt
+	#./bin/enhanced_algo data/ex_N5000_alea >> saved/stats_5000_enhanced_new.txt
+	#./bin/enhanced_algo data/ex_N10000_alea >> saved/stats_10000_enhanced.txt
+	#./bin/enhanced_algo data/ex_N32768_alea >> saved/stats_32768_enhanced_new.txt
+	#./bin/enhanced_algo data/ex_N65536_alea >> saved/stats_65536_enhanced_new.txt
 	#./bin/enhanced_algo data/ex_N100000_res100000 >> saved/stats_100000_enhanced_parallel.txt
-	
+	#./bin/enhanced_algo data/ex_N262144_alea >> saved/stats_262144_enhanced_new.txt
 	#./bin/naive_algo_cuda data/ex_N10000_alea >> saved/stats_10000_naive_cuda.txt
 	#./bin/naive_algo_opt_cuda data/ex_N10000_alea >> saved/stats_10000_naive_opt_cuda.txt
 	
@@ -23,7 +25,7 @@ do
 	
 	if [ $(( $var % 10 )) -eq 0 ] ;
 	then
-	    #./bin/enhanced_algo data/ex_N262144_alea >> saved/stats_262144_enhanced.txt
+	    ./bin/enhanced_algo data/ex_N262144_alea >> saved/stats_262144_enhanced_new.txt
 	    echo "$var done"
 	fi
 done
