@@ -1,23 +1,22 @@
 CC=gcc -Wall -O3
 
-OMP=-fopenmp
+NVCC=nvcc
 
-FILES= 	dpr \
-	linear_algo \
-#utils
-#OBJECTS=$(addsuffix .o, $(FILES))
-#BIN=bin/dpr #bin/enhanced_algo #bin/naive_algo
+LIB=-lm -L/usr/local/cuda/lib64/ -lcuda -lcudart
+OMP= #-fopenmp
 
-#all : $(FILES)
-#
-#$(BIN) : $(addprefix obj/, $(OBJECTS))
-#	$(CC) -o $@ $^ $(OMP)
-#
-#obj/%.o : src/%.c
-#	$(CC) -c -o $@ $^ $(OMP)
-#
-#exec:
-#	$(BIN)
+## Debugging
+DEBUGGING = y
+
+ifeq ($(DEBUGGING), y)
+ CFLAGS=-g 
+ CUDA_FLAGS = --generate-code arch=compute_35,code=sm_35 -g -G #-DCUDA_DEBUG 
+else
+ CFLAGS=-O3
+ CUDA_FLAGS = --generate-code arch=compute_35,code=sm_35 -O3 #-DCUDA_DEBUG 
+endif 
+
+FILES=dpr_cuda dpr linear_algo
 
 all : $(FILES)
 
@@ -33,6 +32,14 @@ linear_algo :
 	$(CC) -c -o obj/stack.o src/stack.c
 	$(CC) -c -o obj/linear_algo.o src/linear_algo.c
 	$(CC) -o bin/linear_algo obj/linear_algo.o obj/utils.o obj/stack.o
+
+
+dpr_cuda :
+	$(NVCC) -c -o obj/dpr_cuda.o src/dpr_cuda.cu $(CUDA_FLAGS)
+	$(NVCC) -c -o obj/utils.o src/utils.cu $(CUDA_FLAGS)
+	$(CC) -o bin/dpr_cuda obj/dpr_cuda.o obj/utils.o $(LIB)
+
+
 
 ################################
 
