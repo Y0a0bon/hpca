@@ -255,9 +255,9 @@ int main(int argc, char **argv){
   /* End timing */
   fin = my_gettimeofday();
   
-  /*fprintf(stdout, "N = %d\t S = %llu\n", n, S);
+  fprintf(stdout, "N = %d\t S = %llu\n", n, S);
   fprintf( stdout, "For n=%d: total computation time (with gettimeofday()) : %g s\n\n",
-  n, fin - debut);*/
+  n, fin - debut);
   fprintf( stdout, "%g\n",
     fin - debut);
   return 0;

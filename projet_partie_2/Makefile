@@ -2,25 +2,42 @@ CC=gcc -Wall -O3
 
 OMP=-fopenmp
 
-FILES= dpr utils #enhanced_algo  #naive_algo
-OBJECTS=$(addsuffix .o, $(FILES))
-BIN=bin/dpr #bin/enhanced_algo #bin/naive_algo
+FILES= 	dpr \
+	linear_algo \
+#utils
+#OBJECTS=$(addsuffix .o, $(FILES))
+#BIN=bin/dpr #bin/enhanced_algo #bin/naive_algo
 
-all : $(BIN)
+#all : $(FILES)
+#
+#$(BIN) : $(addprefix obj/, $(OBJECTS))
+#	$(CC) -o $@ $^ $(OMP)
+#
+#obj/%.o : src/%.c
+#	$(CC) -c -o $@ $^ $(OMP)
+#
+#exec:
+#	$(BIN)
 
-$(BIN) : $(addprefix obj/, $(OBJECTS))
-	$(CC) -o $@ $^ $(OMP)
+all : $(FILES)
 
-obj/%.o : src/%.c
-	$(CC) -c -o $@ $^ $(OMP)
+################################
 
-exec:
-	$(BIN)
+dpr :
+	$(CC) -c -o obj/dpr.o src/dpr.c $(OMP)
+	$(CC) -c -o obj/utils.o src/utils.c $(OMP)
+	$(CC) -o bin/dpr obj/dpr.o obj/utils.o $(OMP)
+
+linear_algo :
+	$(CC) -c -o obj/utils.o src/utils.c
+	$(CC) -c -o obj/stack.o src/stack.c
+	$(CC) -c -o obj/linear_algo.o src/linear_algo.c
+	$(CC) -o bin/linear_algo obj/linear_algo.o obj/utils.o obj/stack.o
+
+################################
 
 #.PHONY: clean mrproper
 
 clean :
 	rm -f bin/* obj/*
 
-mrproper :
-	rm -f bin/* obj/* saved/*
