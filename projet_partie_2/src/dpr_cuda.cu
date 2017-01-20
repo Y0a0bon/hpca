@@ -10,10 +10,12 @@
 #include "../inc/utils.h"
 
 //Min nb of points to launch the GPU computation
-#define TRESHOLD_SEQ 1500
+//1500
+#define TRESHOLD_SEQ 90000
 
 //Nb points in each parallel region
-#define SIZE_PARALLEL 1000
+//1000
+#define SIZE_PARALLEL 50000
 
 /**
  * CUDA error control and debugging.
@@ -59,19 +61,20 @@ __global__ void calcul_min( unsigned long *ord, int ind_start, int ind_end, unsi
 
   int a = threadIdx.x;
   int size_tot = (ind_end - ind_start -1);
-  
+  printf("size_tot = %d\n", size_tot);
   //On n'effectue pas le calcul aux indices ind_start ni ind_end
-  int nb_threads = ceilf(size_tot/size_max_parallel);
+  int nb_threads = ceilf((float)size_tot/(float)size_max_parallel);
 
   //size of region to compute in the current thread
-  int size_parallel = floorf( size_tot/nb_threads );
+  int size_parallel = ceilf( (float)size_tot/(float)nb_threads );
+
 
   //have to be computed before the case of a different size_parallel value
   int ind_start_loc = ind_start + a * size_parallel + 1;
   
   if ( a == (nb_threads - 1) )
     size_parallel = size_tot - (nb_threads - 1) * size_parallel;
-
+  printf("size_parallel = %d\n", size_parallel);
     
 
   unsigned long min_loc = ord[ind_start_loc];
@@ -80,22 +83,28 @@ __global__ void calcul_min( unsigned long *ord, int ind_start, int ind_end, unsi
 
   //printf("FINDING YMIN\n");
   
-  for ( i = ind_start_loc + 1; i <= ind_start_loc + size_parallel; i++ ){
+  for ( i = ind_start_loc; i < ind_start_loc + size_parallel; i++ ){
     
     //Looking for the lowest ordinate
     if ( ord[i]< min_loc ){
       min_loc = ord[i];
       ind_min_loc = i;
+      
     }
 
   }
 
+  printf("thread %d : min_loc = %llu, ind_min_loc = %d\n", a, min_loc, ind_min_loc);
+  printf("YMIN = %llu\n", *ymin);
   atomicMin(ymin, min_loc);
   
   __syncthreads();
-  
-  if (*ymin == min_loc)
+
+  printf("ymin = %llu\n", *ymin);
+  if (*ymin == min_loc){
     *ind_min = ind_min_loc;
+    printf("thread %d : min_loc = %llu, ind_min_loc = %d\n", a, min_loc, ind_min_loc);
+  }
   
   return;
 }
@@ -109,46 +118,49 @@ __global__ void calcul_min( unsigned long *ord, int ind_start, int ind_end, unsi
  *
  **/
 
-unsigned long long dpr_cuda(unsigned long **data, int n, int l, int h, int ind_start, int ind_end){
+unsigned long long dpr_cuda(unsigned long **data, int n, int l, unsigned long h, int ind_start, int ind_end){
 
-  //printf("BEGIN\n");
-  
+  printf("BEGIN\n");
+  printf("********************H = %d**************\n", h);
   int i = 0;
   
   //ycross min on the whole area, ymin min on the whole area minus the 2 ends
-  int ymin = 0, ind_min = 0;
-  unsigned long long crosswise_area = 0, left_area = 0, right_area = 0, result_area = 0;
+  int ind_min = 0;
+ 
+  unsigned long long crosswise_area = 0, left_area = 0, right_area = 0, result_area = 0, ymin =0;
 
-  //printf("CAS DE BASE\n");
+
   
   //Two points left : returns the rectangle defined by the height
   if ( (ind_end - ind_start) == 1 ){
+    printf("CAS DE BASE\n");
     return (unsigned long long) (data[0][ind_end]-data[0][ind_start]) * h;
   }
 
   // No parallel computing if too few points
   if ( (ind_end - ind_start) < TRESHOLD_SEQ ){
-    ymin = data[ind_start + 1][1];
+    ymin = data[1][ind_start + 1];
     ind_min = ind_start + 1;
     
-    //printf("FINDING YMIN\n");
+    printf("FINDING YMIN - SEQUENTIAL\n");
     
     //We don't enter the loop if ind_end - ind_start == 2
     for ( i = ind_start + 2; i < ind_end; i++ ){
       
       //Looking for the lowest ordinate
-      if ( data[i][1] < ymin ){
-	ymin = data[i][1];
+      if ( data[1][i] < ymin ){
+	ymin = data[1][i];
 	ind_min = i;
       }
     }
     
   }
   else {
-
+    printf("FINDING YMIN - GPU\n");
     int *ind_min_gpu, *ind_start_gpu, *ind_end_gpu, size_parallel = SIZE_PARALLEL, *size_parallel_gpu;
     unsigned long *ord_gpu;
     unsigned long long *min_gpu;
+
     
     //INIT GPU PARAMETERS
     /* GPU allocation */
@@ -169,19 +181,20 @@ unsigned long long dpr_cuda(unsigned long **data, int n, int l, int h, int ind_s
     cudaMemcpy(ind_end_gpu, &ind_end, sizeof(int), cudaMemcpyHostToDevice);
     cudaMemcpy(size_parallel_gpu, &size_parallel, sizeof(int), cudaMemcpyHostToDevice);
   
-    cudaMemset(min_gpu, 0, sizeof(unsigned long long));
-    cudaMemset(ind_min_gpu, 0, sizeof(int));
+    cudaMemset(min_gpu, h, sizeof(unsigned long long));
+    cudaMemset(ind_min_gpu, -1, sizeof(int));
   
     /* Kernel launching */
     printf("Launching kernel.\n");
     
     //Un seul bloc de threads 1D
-    int nb_threads = ceil(n/SIZE_PARALLEL);
-    printf("nb_threads = %d\n", nb_threads);
+    int size_tot = (ind_end - ind_start -1);
+    int nb_threads = ceil((float)size_tot/(float)SIZE_PARALLEL);
+    //printf("nb_threads = %d\n", nb_threads);
 
     dim3 threadsParBloc(nb_threads, 1);
     dim3 tailleGrille(1, 1);
-
+    printf("********************MIN_GPU = h = %d**************\n", h);
   
     // Compute ymin on GPU
     calcul_min<<<tailleGrille, threadsParBloc>>>(ord_gpu, ind_start, ind_end, min_gpu, ind_min_gpu, size_parallel);
@@ -189,9 +202,11 @@ unsigned long long dpr_cuda(unsigned long **data, int n, int l, int h, int ind_s
     printf("Leaving kernel.\n");
 
     /* Recovering min element and index on CPU (element too for testing purposes) */
-    cudaMemcpy((void *)&ymin, min_gpu, sizeof(unsigned long), cudaMemcpyDeviceToHost);
+    cudaMemcpy((void *)&ymin, min_gpu, sizeof(unsigned long long), cudaMemcpyDeviceToHost);
     cudaMemcpy((void *)&ind_min, ind_min_gpu, sizeof(int), cudaMemcpyDeviceToHost);
-  
+
+
+    printf("ind_start = %d\t, ind_min = %d\t, ind_end = %d\n", ind_start, ind_min, ind_end);
     /* cuda Frees */
     cudaFree(min_gpu);
     cudaFree(ind_min_gpu);
@@ -201,7 +216,7 @@ unsigned long long dpr_cuda(unsigned long **data, int n, int l, int h, int ind_s
 
   }
   
-  //printf("RECURSIVE CALLS\n");
+  printf("RECURSIVE CALLS\n");
   //printf("ind_start = %d\t, ind_min = %d\t, ind_end = %d\n", ind_start, ind_min, ind_end);
   
   crosswise_area = ymin * (data[0][ind_end] - data[0][ind_start]);
@@ -231,9 +246,10 @@ int main(int argc, char **argv){
 
   double debut=0.0, fin=0.0;
   unsigned long **data;
-  unsigned long long S = 0;
+  unsigned long long S = 0, h = 0;
   int res = 0, i= 0;
-  int n = 0, l = 0, h = 0;
+  int n = 0, l = 0;
+
   if(argc != 2){
     printf("Usage: %s <path_of_data_file>\n", argv[0]);
     return -1;
@@ -264,7 +280,7 @@ int main(int argc, char **argv){
 
   /* Do computation:  */
 
-  printf("LAUNCHING DPR\n");
+  printf("LAUNCHING DPR_CUDA\n");
   
   S = dpr_cuda(data, n, l, h, 0, n-1);
   
