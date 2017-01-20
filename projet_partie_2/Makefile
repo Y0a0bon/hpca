@@ -3,7 +3,7 @@ CC=gcc -Wall -O3
 NVCC=nvcc
 
 LIB=-lm -L/usr/local/cuda/lib64/ -lcuda -lcudart
-OMP= #-fopenmp
+OMP= -fopenmp
 
 ## Debugging
 DEBUGGING = y

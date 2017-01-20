@@ -257,7 +257,7 @@ int main(int argc, char **argv){
   char *name = argv[1];
 
   /* Read parameters */
-  res = read_param(name, data, &n, &l, &h);
+  res = read_param_cuda(name, data, &n, &l, &h);
   if(res != 0){
     printf("read_param :\t ERROR\n");
     return -1;
