@@ -25,11 +25,13 @@ all : $(FILES)
 ################################
 
 naive_algo :
+	echo 'export OMP_NUM_THREADS=16'
 	$(CC) -c -o obj/naive_algo.o src/naive_algo.c $(OMP)
 	$(CC) -c -o obj/utils.o src/utils.c $(OMP)
 	$(CC) -o bin/naive_algo obj/naive_algo.o obj/utils.o $(OMP)
 
 enhanced_algo :
+	echo 'export OMP_NUM_THREADS=16'
 	$(CC) -c -o obj/enhanced_algo.o src/enhanced_algo.c $(OMP)
 	$(CC) -c -o obj/utils.o src/utils.c $(OMP)
 	$(CC) -o bin/enhanced_algo obj/enhanced_algo.o obj/utils.o $(OMP)
@@ -59,6 +61,14 @@ enhanced_algo_opt_cuda :
 	$(CC) -o bin/enhanced_algo_opt_cuda obj/enhanced_algo_opt_cuda.o obj/utils.o $(LIB)
 
 ################################
+
+exec :
+	./bin/naive_algo ./data/ex_N500_res7854
+	./bin/enhanced_algo ./data/ex_N100000_res100000
+	./bin/naive_algo_cuda ./data/ex_N100000_res100000
+	./bin/enhanced_algo_cuda ./data/ex_N100000_res100000
+
+#.PHONY: clean
 
 clean :
 	rm -f bin/* obj/*

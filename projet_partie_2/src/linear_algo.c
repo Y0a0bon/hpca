@@ -139,10 +139,11 @@ int main(int argc, char **argv){
   /* End timing */
   fin = my_gettimeofday();
   
-  fprintf(stdout, "N = %d\t S = %llu\n", n, S);
-    fprintf( stdout, "For n=%d: total computation time (with gettimeofday()) : %g s\n\n",
-    n, fin - debut);
-  fprintf( stdout, "%g\n",
+  fprintf(stdout, "***** Algorithme linéaire *****\n");
+#endif
+  fprintf(stdout, "Pour les paramètres N = %d\t S = %llu\n", n, S);
+  fprintf( stdout, "Total computation time in s (with gettimeofday()) :\t");
+  fprintf( stdout, "%g\n\n",
 	   fin - debut);
 	
   for(i=0; i<n; i++)

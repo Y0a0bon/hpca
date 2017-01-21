@@ -3,7 +3,7 @@ CC=gcc -Wall -O3
 NVCC=nvcc
 
 LIB=-lm -L/usr/local/cuda/lib64/ -lcuda -lcudart
-OMP= -fopenmp
+OMP=-fopenmp
 
 ## Debugging
 DEBUGGING = y
@@ -16,13 +16,14 @@ else
  CUDA_FLAGS = --generate-code arch=compute_35,code=sm_35 -O3 #-DCUDA_DEBUG 
 endif 
 
-FILES=dpr_cuda dpr linear_algo
+FILES=dpr linear_algo dpr_cuda
 
 all : $(FILES)
 
 ################################
 
 dpr :
+	echo 'export OMP_NUM_THREADS=8'
 	$(CC) -c -o obj/dpr.o src/dpr.c $(OMP)
 	$(CC) -c -o obj/utils.o src/utils.c $(OMP)
 	$(CC) -o bin/dpr obj/dpr.o obj/utils.o $(OMP)
@@ -38,10 +39,14 @@ dpr_cuda :
 	$(NVCC) -c -o obj/utils.o src/utils.cu $(CUDA_FLAGS)
 	$(CC) -o bin/dpr_cuda obj/dpr_cuda.o obj/utils.o $(LIB)
 
-	################################
+################################
+
+exec :
+	./bin/dpr ./data/ex_N100000_res100000
+	./bin/linear_algo ./data/ex_N100000_res100000
+	./bin/dpr_cuda ./data/ex_N100000_res100000
 
 #.PHONY: clean mrproper
 
 clean :
 	rm -f bin/* obj/*
-
