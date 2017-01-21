@@ -33,15 +33,12 @@ linear_algo :
 	$(CC) -c -o obj/linear_algo.o src/linear_algo.c
 	$(CC) -o bin/linear_algo obj/linear_algo.o obj/utils.o obj/stack.o
 
-
 dpr_cuda :
 	$(NVCC) -c -o obj/dpr_cuda.o src/dpr_cuda.cu $(CUDA_FLAGS)
 	$(NVCC) -c -o obj/utils.o src/utils.cu $(CUDA_FLAGS)
 	$(CC) -o bin/dpr_cuda obj/dpr_cuda.o obj/utils.o $(LIB)
 
-
-
-################################
+	################################
 
 #.PHONY: clean mrproper
 

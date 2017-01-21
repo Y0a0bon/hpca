@@ -67,9 +67,6 @@ unsigned long long enhanced_algo_parallel(unsigned long **data, int n, int l, in
       else{}
 
       S = MAX(S, (data[b][0] - data[a][0]) * ymin);
-      /*S_ij = (data[b][0] - data[a][0]) * ymin;
-      if(S_ij > S)
-	S = S_ij;*/
     } // b loop
     
   } // a loop
