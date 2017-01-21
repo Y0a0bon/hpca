@@ -9,12 +9,6 @@
 #include "../inc/stack.h"
 #include "../inc/linear_algo.h"
 
-struct coord
-{
-	unsigned long x;
-	unsigned long y;
-};
-
 
 /**
  * Function verif_ctr(){}
@@ -28,6 +22,7 @@ int verif_ctr(unsigned long **data, int n){
   for(i=0; i<n-1; i++){
     /* Verify each point has a different absciss */
     if(data[i][0] == data[i+1][0]){
+      printf("Same absciss on x = %lu", data[i][0]);
       return 1;
     }
   }
@@ -41,79 +36,55 @@ int verif_ctr(unsigned long **data, int n){
  **/
 unsigned long long linear_algo(unsigned long **data, int n, int h, int l){
 
-  int i = 0, j = 0, size = 0; //y_tmp = 0, cursor = 0, cursor_tmp = 0, size = 0;
+  int i = 0, j = 0, indice = 0, y_tmp = 0, ptmp = 0;
   unsigned long current_p[] = {0,0}, pred_p[] = {0,0};
   unsigned long long S = 0;
-  coord_s coord_tmp; //**heap = malloc(n * sizeof(unsigned long *));
-	
-	stack_s *st = initialize();
-	
-  /*printf("linear_algo :\nAllocation\t\t");
-  for(i=0; i<n; i++)
-    heap[i] = malloc(2 * sizeof(unsigned long));
-  printf("OK\n");
-  */
-	
-  for(i=1; i<n; i++){
+  coord_s coord_tmp;
+  stack_s *st = initialize(n);
+
+  /* First rectangle of the file */
+  S = h*data[1][0];
+
+  for(i=2; i<n-1; i++){
+    /* Current point */
     current_p[0] = data[i][0];
     current_p[1] = data[i][1];
+    /* Precedent */
     pred_p[0] = data[i-1][0];
     pred_p[1] = data[i-1][1];
-    printf("%d. Point (%lu,%lu), precede de (%lu,%lu)\n", i, current_p[0],  current_p[1], pred_p[0], pred_p[1]);
-    /* Fill the heap */
-		/* TODO */
-		for(j=size; j<i; j++){
-      if(data[j][1] <= pred_p[1]){
-					coord_tmp.x = data[j][0];
-					coord_tmp.y = data[j][1];
-					stack_push(st, coord_tmp);
-					size++;
-			}
-		}
-		
-		stack_print(st);
-		
-		
-		/*
-    for(j=size; j<i; j++){
-      if(data[j][1] <= pred_p[1]){
-				heap[cursor][0] = data[j][0];
-				heap[cursor][1] = data[j][1];
-				size++;
-      }
-    }
-		printf("heap : { ");
-		for(j=0; j<size; j++)
-			printf("(%lu,%lu) ", heap[j][0],heap[j][1]);
-    printf("}\n");
-    cursor = size-1;
-    y_tmp = pred_p[1];
-    S = MAX(S, (current_p[0]-pred_p[0])*h);
-    printf("Comparaison du rectangle entre les 2 points\n");
-    while(cursor != 0){
-      if(heap[cursor][1] > current_p[1] && heap[cursor][1] <= y_tmp){
-				y_tmp = MIN(y_tmp, heap[cursor][1]);
-				//Compute area between current point (right side), 
-					 first point of the heap (top side) and the point
-					 before in the heap (left side) */
-				/*
-				cursor_tmp = cursor-1;
-				while(heap[cursor_tmp][1] > heap[cursor][1] && cursor_tmp > 0){
-					cursor_tmp--;
-					//printf("cursor tmp : %d\n", cursor_tmp);
-				}
-				printf("(%d,%d) On compare S avec le rectange entre (%lu,%lu) et (%lu,%lu)\n", cursor, cursor_tmp, heap[cursor][0], heap[cursor][1], heap[cursor_tmp][0], heap[cursor_tmp][1]);
-				S = MAX(S, (current_p[0] - heap[cursor][0])* heap[cursor_tmp][1]);
-				//cursor = cursor_tmp;
-			}
-						cursor--;
-			*/
-  }
 
-  /*for(i=0; i<n; i++)
-    free(heap[i]);
-  free(heap);
-	*/
+    /* Fill the heap */
+    if(data[i-2][1] <= pred_p[1]){
+      coord_tmp.x = data[i-2][0];
+      coord_tmp.y = data[i-2][1];
+      stack_push(st, coord_tmp, i-2);
+    }
+    /* Updating heap */
+    indice = stack_top(st);
+    while(data[indice][1] > pred_p[1]){
+      stack_pop(st);
+      indice = stack_top(st);
+    }
+
+    /* First rectangle */
+    S = MAX(S, (current_p[0]-pred_p[0])*h);
+
+    /* Rectangles behind */
+    if(st->size > 0){
+      /* First point */
+      ptmp = data[st->data_i[st->size-1]][0];
+      S = MAX(S, (current_p[0] - ptmp) * pred_p[1]);
+      /* Following rectangles */
+      for(j=st->size; j >0 ; j--){
+	ptmp = data[st->data_i[j-1]][0];
+	S = MAX(S, (current_p[0] - ptmp) * data[st->data_i[j]][1]);
+      } // j loop 
+    } // if
+  } // i loop
+  
+  stack_free(st);
+
+
   return S;
 }
 
