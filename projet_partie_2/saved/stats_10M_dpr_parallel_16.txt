@@ -1,0 +1,400 @@
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.267169 s
+
+0.267169
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.263273 s
+
+0.263273
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.26169 s
+
+0.26169
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.262958 s
+
+0.262958
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.266807 s
+
+0.266807
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.261547 s
+
+0.261547
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.260613 s
+
+0.260613
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.26235 s
+
+0.26235
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.260358 s
+
+0.260358
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.263436 s
+
+0.263436
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.264556 s
+
+0.264556
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.267261 s
+
+0.267261
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.261095 s
+
+0.261095
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.263027 s
+
+0.263027
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.260542 s
+
+0.260542
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.260769 s
+
+0.260769
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.261532 s
+
+0.261532
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.263296 s
+
+0.263296
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.262776 s
+
+0.262776
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.26276 s
+
+0.26276
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.262623 s
+
+0.262623
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.263596 s
+
+0.263596
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.263028 s
+
+0.263028
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.265474 s
+
+0.265474
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.260831 s
+
+0.260831
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.261568 s
+
+0.261568
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.263941 s
+
+0.263941
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.264436 s
+
+0.264436
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.266029 s
+
+0.266029
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.261857 s
+
+0.261857
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.261931 s
+
+0.261931
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.265742 s
+
+0.265742
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.262783 s
+
+0.262783
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.266174 s
+
+0.266174
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.262519 s
+
+0.262519
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.26469 s
+
+0.26469
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.262753 s
+
+0.262753
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.261836 s
+
+0.261836
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.263127 s
+
+0.263127
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.262933 s
+
+0.262933
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.262351 s
+
+0.262351
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.265051 s
+
+0.265051
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.264887 s
+
+0.264887
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.261842 s
+
+0.261842
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.262108 s
+
+0.262108
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.265304 s
+
+0.265304
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.262922 s
+
+0.262922
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.263272 s
+
+0.263272
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.264006 s
+
+0.264006
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.265986 s
+
+0.265986
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.264668 s
+
+0.264668
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.262225 s
+
+0.262225
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.262258 s
+
+0.262258
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.262555 s
+
+0.262555
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.263186 s
+
+0.263186
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.263603 s
+
+0.263603
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.265613 s
+
+0.265613
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.261882 s
+
+0.261882
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.261364 s
+
+0.261364
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.262683 s
+
+0.262683
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.263222 s
+
+0.263222
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.264983 s
+
+0.264983
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.2694 s
+
+0.2694
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.2656 s
+
+0.2656
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.262372 s
+
+0.262372
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.263533 s
+
+0.263533
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.262622 s
+
+0.262622
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.266005 s
+
+0.266005
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.262107 s
+
+0.262107
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.262284 s
+
+0.262284
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.269124 s
+
+0.269124
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.266054 s
+
+0.266054
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.266074 s
+
+0.266074
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.26666 s
+
+0.26666
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.262483 s
+
+0.262483
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.258728 s
+
+0.258728
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.263584 s
+
+0.263584
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.265537 s
+
+0.265537
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.261867 s
+
+0.261867
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.264243 s
+
+0.264243
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.261248 s
+
+0.261248
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.26367 s
+
+0.26367
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.26258 s
+
+0.26258
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.260018 s
+
+0.260018
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.264373 s
+
+0.264373
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.264466 s
+
+0.264466
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.267552 s
+
+0.267552
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.26283 s
+
+0.26283
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.263571 s
+
+0.263571
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.263331 s
+
+0.263331
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.268135 s
+
+0.268135
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.266131 s
+
+0.266131
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.262125 s
+
+0.262125
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.259063 s
+
+0.259063
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.264029 s
+
+0.264029
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.262157 s
+
+0.262157
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.260919 s
+
+0.260919
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.263801 s
+
+0.263801
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.264343 s
+
+0.264343
+N = 10000000	 S = 18446744073497667066
+For n=10000000: total computation time (with gettimeofday()) : 0.261696 s
+
+0.261696
