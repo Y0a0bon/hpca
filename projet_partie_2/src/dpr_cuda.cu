@@ -11,11 +11,11 @@
 
 //Min nb of points to launch the GPU computation
 //1500
-#define TRESHOLD_SEQ 90000
+#define TRESHOLD_SEQ 9900000
 
 //Nb points in each parallel region
 //1000
-#define SIZE_PARALLEL 50000
+#define SIZE_PARALLEL 5000000
 
 /**
  * CUDA error control and debugging.
@@ -45,23 +45,11 @@
     CUDA_SYNC_ERROR();						\
   }
 
-
-/**
- * Function iDivUp()
- * Return integer quotient superior or equal to "a/b"
- * Source : CUDA SDK 4.1
- */
-static int iDivUp(int a, int b){
-  return ((a % b != 0) ? (a / b + 1) : (a / b));
-}
-
-
-
 __global__ void calcul_min( unsigned long *ord, int ind_start, int ind_end, unsigned long long *ymin, int *ind_min, int size_max_parallel ){
 
   int a = threadIdx.x;
   int size_tot = (ind_end - ind_start -1);
-  printf("size_tot = %d\n", size_tot);
+
   //On n'effectue pas le calcul aux indices ind_start ni ind_end
   int nb_threads = ceilf((float)size_tot/(float)size_max_parallel);
 
@@ -74,8 +62,7 @@ __global__ void calcul_min( unsigned long *ord, int ind_start, int ind_end, unsi
   
   if ( a == (nb_threads - 1) )
     size_parallel = size_tot - (nb_threads - 1) * size_parallel;
-  printf("size_parallel = %d\n", size_parallel);
-    
+
 
   unsigned long min_loc = ord[ind_start_loc];
   int ind_min_loc = ind_start_loc;
@@ -94,17 +81,12 @@ __global__ void calcul_min( unsigned long *ord, int ind_start, int ind_end, unsi
 
   }
 
-  printf("thread %d : min_loc = %llu, ind_min_loc = %d\n", a, min_loc, ind_min_loc);
-  printf("YMIN = %llu\n", *ymin);
   atomicMin(ymin, min_loc);
   
   __syncthreads();
 
-  printf("ymin = %llu\n", *ymin);
-  if (*ymin == min_loc){
+  if (*ymin == min_loc)
     *ind_min = ind_min_loc;
-    printf("thread %d : min_loc = %llu, ind_min_loc = %d\n", a, min_loc, ind_min_loc);
-  }
   
   return;
 }
@@ -120,8 +102,6 @@ __global__ void calcul_min( unsigned long *ord, int ind_start, int ind_end, unsi
 
 unsigned long long dpr_cuda(unsigned long **data, int n, int l, unsigned long h, int ind_start, int ind_end){
 
-  printf("BEGIN\n");
-  printf("********************H = %d**************\n", h);
   int i = 0;
   
   //ycross min on the whole area, ymin min on the whole area minus the 2 ends
@@ -133,7 +113,7 @@ unsigned long long dpr_cuda(unsigned long **data, int n, int l, unsigned long h,
   
   //Two points left : returns the rectangle defined by the height
   if ( (ind_end - ind_start) == 1 ){
-    printf("CAS DE BASE\n");
+
     return (unsigned long long) (data[0][ind_end]-data[0][ind_start]) * h;
   }
 
@@ -142,7 +122,6 @@ unsigned long long dpr_cuda(unsigned long **data, int n, int l, unsigned long h,
     ymin = data[1][ind_start + 1];
     ind_min = ind_start + 1;
     
-    printf("FINDING YMIN - SEQUENTIAL\n");
     
     //We don't enter the loop if ind_end - ind_start == 2
     for ( i = ind_start + 2; i < ind_end; i++ ){
@@ -156,7 +135,7 @@ unsigned long long dpr_cuda(unsigned long **data, int n, int l, unsigned long h,
     
   }
   else {
-    printf("FINDING YMIN - GPU\n");
+
     int *ind_min_gpu, *ind_start_gpu, *ind_end_gpu, size_parallel = SIZE_PARALLEL, *size_parallel_gpu;
     unsigned long *ord_gpu;
     unsigned long long *min_gpu;
@@ -185,28 +164,24 @@ unsigned long long dpr_cuda(unsigned long **data, int n, int l, unsigned long h,
     cudaMemset(ind_min_gpu, -1, sizeof(int));
   
     /* Kernel launching */
-    printf("Launching kernel.\n");
     
     //Un seul bloc de threads 1D
     int size_tot = (ind_end - ind_start -1);
     int nb_threads = ceil((float)size_tot/(float)SIZE_PARALLEL);
-    //printf("nb_threads = %d\n", nb_threads);
+
 
     dim3 threadsParBloc(nb_threads, 1);
     dim3 tailleGrille(1, 1);
-    printf("********************MIN_GPU = h = %d**************\n", h);
   
     // Compute ymin on GPU
     calcul_min<<<tailleGrille, threadsParBloc>>>(ord_gpu, ind_start, ind_end, min_gpu, ind_min_gpu, size_parallel);
 
-    printf("Leaving kernel.\n");
 
     /* Recovering min element and index on CPU (element too for testing purposes) */
     cudaMemcpy((void *)&ymin, min_gpu, sizeof(unsigned long long), cudaMemcpyDeviceToHost);
     cudaMemcpy((void *)&ind_min, ind_min_gpu, sizeof(int), cudaMemcpyDeviceToHost);
 
 
-    printf("ind_start = %d\t, ind_min = %d\t, ind_end = %d\n", ind_start, ind_min, ind_end);
     /* cuda Frees */
     cudaFree(min_gpu);
     cudaFree(ind_min_gpu);
@@ -216,15 +191,11 @@ unsigned long long dpr_cuda(unsigned long **data, int n, int l, unsigned long h,
 
   }
   
-  printf("RECURSIVE CALLS\n");
-  //printf("ind_start = %d\t, ind_min = %d\t, ind_end = %d\n", ind_start, ind_min, ind_end);
-  
   crosswise_area = ymin * (data[0][ind_end] - data[0][ind_start]);
 
   left_area = dpr_cuda(data, n, l, h, ind_start, ind_min);
   right_area = dpr_cuda(data, n, l, h, ind_min, ind_end);
 
-  //printf("MAX\n");
   
   //Result is the max of these areas
   result_area = crosswise_area;
@@ -232,10 +203,6 @@ unsigned long long dpr_cuda(unsigned long **data, int n, int l, unsigned long h,
     result_area = left_area;
   if ( right_area > result_area )
     result_area = right_area;
-
-  
-  //printf("ind_start = %d\t, ind_min = %d\t, ind_end = %d\n left = %llu\t, right = %llu\t, cross = %llu, ext_cross = %llu, result_area = %llu\n\n", ind_start, ind_min, ind_end, left_area, right_area, crosswise_area, ext_crosswise_area, result_area);
-
 
   
   return result_area;
@@ -247,7 +214,7 @@ int main(int argc, char **argv){
   double debut=0.0, fin=0.0;
   unsigned long **data;
   unsigned long long S = 0, h = 0;
-  int res = 0, i= 0;
+  int res = 0;
   int n = 0, l = 0;
 
   if(argc != 2){
@@ -280,17 +247,15 @@ int main(int argc, char **argv){
 
   /* Do computation:  */
 
-  printf("LAUNCHING DPR_CUDA\n");
-  
   S = dpr_cuda(data, n, l, h, 0, n-1);
   
   /* End timing */
   fin = my_gettimeofday();
-  
-  fprintf(stdout, "N = %d\t S = %llu\n", n, S);
-  /*fprintf( stdout, "For n=%d: total computation time (with gettimeofday()) : %g s\n\n",
-  n, fin - debut);*/
-  fprintf( stdout, "%g\n",
+  fprintf(stdout, "\n***** Algorithme Diviser Pour Régner, hybride *****\n");
+  fprintf(stdout, "Pour les paramètres N = %d\t S = %llu\nTRESHOLD_SEQ = %d\t, SIZE_PARALLEL = %d\n", n, S, TRESHOLD_SEQ, SIZE_PARALLEL);
+  fprintf( stdout, "Total computation time in s (with gettimeofday()) :\t");
+  fprintf( stdout, "%g\n\n",
 	   fin - debut);
+
   return 0;
 }
