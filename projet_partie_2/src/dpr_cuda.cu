@@ -10,12 +10,10 @@
 #include "../inc/utils.h"
 
 //Min nb of points to launch the GPU computation
-//1500
-#define TRESHOLD_SEQ 9900000
+#define TRESHOLD_SEQ 90000
 
 //Nb points in each parallel region
-//1000
-#define SIZE_PARALLEL 5000000
+#define SIZE_PARALLEL 50000
 
 /**
  * CUDA error control and debugging.
