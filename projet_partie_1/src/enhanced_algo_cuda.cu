@@ -159,7 +159,6 @@ int main(int argc, char **argv){
 
   /* Kernel launching */
   printf("Launching kernel.\n");
-  // Using n*n threads but not every one is useful, because of the "i < j" constraint
   dim3 threadsParBloc(32, 1);
   dim3 tailleGrille(iDivUp(n,32), 1);
   
