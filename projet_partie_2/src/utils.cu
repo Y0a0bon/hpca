@@ -23,7 +23,7 @@ double my_gettimeofday(){
  *  n"
  *
  **/
-int read_param(char *name, unsigned long **data, int *n, int *l, int *h){
+int read_param_cuda(char *name, unsigned long **data, int *n, int *l, unsigned long long *h){
 
   FILE* fp = NULL;
   fp = fopen(name, "r");

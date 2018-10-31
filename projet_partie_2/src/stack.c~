@@ -1,0 +1,87 @@
+/**
+ * stack.c
+ **/
+#include <stdio.h>
+#include <stdlib.h>
+#include "../inc/stack.h"
+
+
+
+
+
+stack_s *initialize()
+{
+  stack_s *st = malloc(sizeof(*st));
+  st->first = NULL;
+
+  return st;
+}
+
+
+void stack_push (stack_s *st, coord_s n_data)
+{
+  element_s *new = malloc(sizeof(*new));
+  if(st == NULL || new == NULL)
+    exit(EXIT_FAILURE);
+	
+  new->data = n_data;
+  new->next = st->first;
+  st->first = new;
+	
+  return;
+}
+
+
+coord_s stack_pop (stack_s *st)
+{
+  if(st == NULL)
+    exit(EXIT_FAILURE);
+	
+  coord_s ret;
+  ret.x = 0;
+  ret.y = 0;
+	
+  element_s *stackElement = st->first;
+	
+  if(st != NULL && st->first != NULL){
+    ret = stackElement->data;
+    st->first = stackElement->next;
+    free(stackElement);
+  }
+	
+  return ret;
+}
+
+
+coord_s stack_pop_no_free (stack_s *st)
+{
+  if(st == NULL)
+    exit(EXIT_FAILURE);
+	
+  coord_s ret;
+  ret.x = 0;
+  ret.y = 0;
+	
+  element_s *stackElement = st->first;
+	
+  if(st != NULL && st->first != NULL){
+    ret = stackElement->data;
+    st->first = stackElement->next;
+  }
+	
+  return ret;
+}
+
+
+void stack_print(stack_s *st)
+{
+  if(st == NULL)
+    exit(EXIT_FAILURE);
+  printf("{");
+  element_s *actual = st->first;
+  while(actual != NULL){
+    printf("(%lu, %lu) ", actual->data.x, actual->data.y);
+    actual = actual->next;
+  }
+  printf(" }\n");
+}

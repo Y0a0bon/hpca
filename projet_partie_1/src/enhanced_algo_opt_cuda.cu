@@ -195,10 +195,10 @@ int main(int argc, char **argv){
   /* End timing */
   fin = my_gettimeofday();
   
-  fprintf(stdout, "N = %d\t S = %llu\n", n, S);
-  fprintf( stdout, "For n=%d: total computation time in s (with gettimeofday()) :\n",
-  n);
-  fprintf( stdout, "%g\n",
+  fprintf(stdout, "***** Algorithme amélioré optimal, en CUDA *****\n");
+  fprintf(stdout, "Pour les paramètres N = %d\t S = %llu\n", n, S);
+  fprintf( stdout, "Total computation time in s (with gettimeofday()) :\t");
+  fprintf( stdout, "%g\n\n",
 	   fin - debut);
 
   

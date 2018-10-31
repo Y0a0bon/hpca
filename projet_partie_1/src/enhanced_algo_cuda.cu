@@ -159,7 +159,6 @@ int main(int argc, char **argv){
 
   /* Kernel launching */
   printf("Launching kernel.\n");
-  // Using n*n threads but not every one is useful, because of the "i < j" constraint
   dim3 threadsParBloc(32, 1);
   dim3 tailleGrille(iDivUp(n,32), 1);
   
@@ -183,10 +182,10 @@ int main(int argc, char **argv){
   /* End timing */
   fin = my_gettimeofday();
 
-  fprintf(stdout, "N = %d\t S = %llu\n", n, S);
-  fprintf( stdout, "For n=%d: total computation time in s (with gettimeofday()) :\n",
-  n);
-  fprintf( stdout, "%g\n",
+  fprintf(stdout, "***** Algorithme amélioré, en CUDA *****\n");
+  fprintf(stdout, "Pour les paramètres N = %d\t S = %llu\n", n, S);
+  fprintf( stdout, "Total computation time in s (with gettimeofday()) :\t");
+  fprintf( stdout, "%g\n\n",
 	   fin - debut);
 
   

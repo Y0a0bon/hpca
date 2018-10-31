@@ -67,9 +67,6 @@ unsigned long long enhanced_algo_parallel(unsigned long **data, int n, int l, in
       else{}
 
       S = MAX(S, (data[b][0] - data[a][0]) * ymin);
-      /*S_ij = (data[b][0] - data[a][0]) * ymin;
-      if(S_ij > S)
-	S = S_ij;*/
     } // b loop
     
   } // a loop
@@ -133,10 +130,14 @@ int main(int argc, char **argv){
   /* End timing */
   fin = my_gettimeofday();
   
-  /*fprintf(stdout, "\n\nN = %d\t S = %llu\n", n, S);
-  fprintf( stdout, "For n=%d: total computation time in s (with gettimeofday()) :\n",
-  n);*/
-  fprintf( stdout, "%g\n",
+#ifdef _OPENMP
+  fprintf(stdout, "***** Algorithme amélioré, avec OpenMP *****\n");
+#else
+  fprintf(stdout, "***** Algorithme amélioré, sans OpenMP *****\n");
+#endif
+  fprintf(stdout, "Pour les paramètres N = %d\t S = %llu\n", n, S);
+  fprintf( stdout, "Total computation time in s (with gettimeofday()) :\t");
+  fprintf( stdout, "%g\n\n",
 	   fin - debut);
       
   return 0;
